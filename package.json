@@ -1,0 +1,12 @@
+﻿{
+  "name": "taylor-swift-testing",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "newman run collections/taylor-swift-api-testing.postman_collection.json",
+    "test:relatorio": "newman run collections/taylor-swift-api-testing.postman_collection.json --reporters cli,htmlextra --reporter-htmlextra-export relatorio.html"
+  },
+  "devDependencies": {
+    "newman": "^6.1.0",
+    "newman-reporter-htmlextra": "^1.22.11"
+  }
+}
