@@ -137,6 +137,175 @@
         }
       },
       "response": []
+    },
+    {
+      "name": "Buscar album inexistente",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status deve ser 404 Not Found\", function () {\r",
+              "    pm.response.to.have.status(404);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Resposta deve ser JSON\", function () {\r",
+              "    pm.response.to.be.json;\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Verifica se a resposta de erro não é um array\", () => {\r",
+              "    pm.expect(pm.response.json()).to.not.be.an(\"array\");\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Verifica se a resposta contém uma mensagem de erro amigável\", () => {\r",
+              "    const response = pm.response.json();\r",
+              "    pm.expect(response).to.have.any.keys(\"message\", \"error\", \"detail\");\r",
+              "    pm.expect(response.error).to.include(\"does not exist\");\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseURL}}/albums/999",
+          "host": [
+            "{{baseURL}}"
+          ],
+          "path": [
+            "albums",
+            "999"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Buscar musica com parametro inesperado",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status deve ser 400 Bad Request ou 404 Not Found\", function () {\r",
+              "    pm.expect(pm.response.code).to.be.oneOf([400, 404]);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Resposta deve ser JSON\", function () {\r",
+              "    pm.response.to.be.json;\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseURL}}/songs/abc",
+          "host": [
+            "{{baseURL}}"
+          ],
+          "path": [
+            "songs",
+            "abc"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Buscar letra com parametro inesperado",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status deve ser 400 Bad Request\", function () {\r",
+              "    pm.response.to.have.status(400);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Verifica se o erro bloqueia o envio de parágrafos\", () => {\r",
+              "    const responseText = pm.response.text();\r",
+              "    pm.expect(responseText).to.not.include(\"paragraph\"); \r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseURL}}/lyrics?shouldRandomizeLyrics=batata&numberOfParagraphs=-5",
+          "host": [
+            "{{baseURL}}"
+          ],
+          "path": [
+            "lyrics"
+          ],
+          "query": [
+            {
+              "key": "shouldRandomizeLyrics",
+              "value": "batata"
+            },
+            {
+              "key": "numberOfParagraphs",
+              "value": "-5"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Deletar album",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status deve ser 405 Method Not Allowed, 403 Forbidden\", function () {\r",
+              "    pm.expect(pm.response.code).to.be.oneOf([405, 403, 404]); \r",
+              "});\r",
+              "\r",
+              "pm.test(\"Garante que o álbum não foi retornado na resposta\", function () {\r",
+              "    const responseText = pm.response.text();\r",
+              "    pm.expect(responseText).to.not.include(\"Midnights\");\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseURL}}/albums/10",
+          "host": [
+            "{{baseURL}}"
+          ],
+          "path": [
+            "albums",
+            "10"
+          ]
+        }
+      },
+      "response": []
     }
   ],
   "event": [
