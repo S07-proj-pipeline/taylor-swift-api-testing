@@ -1,10 +1,9 @@
 {
   "info": {
-    "_postman_id": "5e78fe6d-0dc7-40c8-b6f9-518552769e30",
+    "_postman_id": "a97c13fc-195f-4ad5-aa73-2dc75c598ad9",
     "name": "taylor-swift-api-testing",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "53795167",
-    "_collection_link": "https://go.postman.co/collection/53795167-5e78fe6d-0dc7-40c8-b6f9-518552769e30?source=collection_link"
+    "_exporter_id": "27989098"
   },
   "item": [
     {
