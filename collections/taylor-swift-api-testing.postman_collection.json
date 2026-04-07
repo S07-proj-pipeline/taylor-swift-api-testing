@@ -234,7 +234,7 @@
               "});\r",
               "\r",
               "pm.test(\"Verifica se o erro bloqueia o envio de parágrafos\", () => {\r",
-              "    pm.expect(pm.response.json()).to.not.have.any.keys(\"lyrics\", \"num_oaragraphs\");\r",
+              "    pm.expect(pm.response.json()).to.not.have.any.keys(\"lyrics\", \"num_paragraphs\");\r",
               "});"
             ],
             "type": "text/javascript",
