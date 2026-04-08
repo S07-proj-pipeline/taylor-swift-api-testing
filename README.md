@@ -83,8 +83,22 @@ O relatório é gerado na raiz do projeto.
 Para versionamento, foi utilizado git com branches. Cada integrante criou sua própria branch, e depois foi realizado um Pull Request e merge para a branch 'develop'. Após finalização do projeto, foi feito o merge para a branch 'main'.
 
 ## Testes de performance
-Como extra, foram criados testes de estresse e de carga utilizando a ferramenta K6.
-[...]
+Como extra, foram criados testes de estresse e de carga utilizando a ferramenta K6. Ao final da execução dos testes é gerado automaticamente um relatório com detalhes sobre cada teste executado.
+
+Teste de Carga -> O teste de carga simula 15 usuarios virtuais acessando a API durante 10 segundos visando verificar a estabilidade da API sobre carga leve. Cada um desses usuarios executa três requisições para os endpoints /albums, /songs e /lyrics.
+
+Teste de Estresse -> Foi feita uma configuração em stages para definir uma subida controlada de carga, começando com 5 usuários e subindo de 5 em 5, visando simular um cenário real de crescimento de acessos e verificar como a API se comporta sob uma variação de carga. 
+
+Estrutura:
+```bash
+.
+├── reports
+│   └── load-summary.html
+│   └── stress-summary.html
+├── load-test.js
+└── stress-test.js
+
+```
 
 Para testar:
 ```bash
