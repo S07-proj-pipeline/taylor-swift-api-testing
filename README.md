@@ -119,6 +119,8 @@ Para criação dos testes e desenvolvimento do plano de testes, foram consultada
 [Stack Overflow: Postman test automation - verify json array response](https://stackoverflow.com/questions/63618247/postman-test-automation-verify-json-array-response) \
 [Postman Learning: Install and run Newman](https://learning.postman.com/docs/collections/using-newman-cli/installing-running-newman) \
 [Grafana k6 Documents](https://grafana.com/docs/k6/latest/) \
+[Write scripts to test API response data in Postman](https://learning.postman.com/docs/tests-and-scripts/write-scripts/test-scripts) \
+[Postman test script examples](https://learning.postman.com/docs/tests-and-scripts/write-scripts/test-examples) \
 Material de aula
 
 Foi utilizado o Claude para execução das seguintes tarefas:
