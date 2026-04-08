@@ -1,577 +1,733 @@
 {
-	"info": {
-		"_postman_id": "f9ead8c8-b6c7-4d64-a3aa-f022349f3582",
-		"name": "taylor-swift-api-testing",
-		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
-		"_exporter_id": "53803641",
-		"_collection_link": "https://mecrym-7715292.postman.co/workspace/Maria-Moreira's-Workspace~cd91dc55-7bd2-4f2c-88a0-84b8cdacdbd8/collection/53803641-f9ead8c8-b6c7-4d64-a3aa-f022349f3582?action=share&source=collection_link&creator=53803641"
-	},
-	"item": [
-		{
-			"name": "Buscar todos os albums",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('Status deve ser 200 OK', function () {\r",
-							"    pm.response.to.have.status(200);\r",
-							"});\r",
-							"\r",
-							"pm.test('Resposta deve ser JSON', function () {\r",
-							"    pm.response.to.be.json;\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Verifica se a resposta é um array\", () => {\r",
-							"    pm.expect(pm.response.json()).to.be.an(\"array\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Verifica se a resposta contém os 12 álbums\", () => {\r",
-							"    pm.expect(Object.keys(pm.response.json()).length).to.eql(12);\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Verifica se todos os álbums têm título\", () => {\r",
-							"    pm.response.json().forEach(item => {\r",
-							"        pm.expect(item).to.have.property(\"title\");\r",
-							"    })\r",
-							"})\r",
-							"\r",
-							"pm.test(\"Verifica se a resposta contém o álbum Midnights\", () => {\r",
-							"    pm.expect(pm.response.text()).to.include(\"Midnights\");\r",
-							"})\r",
-							"\r",
-							"pm.test(\"Verifica se a data de lançamento do álbum Midnights é 21/10/2022\", () => {\r",
-							"    const response = pm.response.json();\r",
-							"    const correctReleaseDate = new Date(\"2022-10-21\");\r",
-							"    const midnightsResponseReleaseDate = new Date(response[9].release_date);\r",
-							"    pm.expect(midnightsResponseReleaseDate).to.include(correctReleaseDate);\r",
-							"})\r",
-							"\r",
-							""
-						],
-						"type": "text/javascript",
-						"packages": {},
-						"requests": {}
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": "{{baseURL}}/albums"
-			},
-			"response": []
-		},
-		{
-			"name": "Busca as músicas do álbum Midnights",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('Status deve ser 200 OK', function () {\r",
-							"    pm.response.to.have.status(200);\r",
-							"});\r",
-							"\r",
-							"pm.test('Resposta deve ser JSON', function () {\r",
-							"    pm.response.to.be.json;\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Verifica se a resposta é um array\", () => {\r",
-							"    pm.expect(pm.response.json()).to.be.an(\"array\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Verifica se a resposta contém as 22 músicas\", () => {\r",
-							"    pm.expect(Object.keys(pm.response.json()).length).to.eql(22);\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Verifica se todas as músicas têm título\", () => {\r",
-							"    pm.response.json().forEach(item => {\r",
-							"        pm.expect(item).to.have.property(\"title\");\r",
-							"    })\r",
-							"})\r",
-							"\r",
-							"pm.test(\"Verifica se a resposta contém a música 'Anti-Hero\", () => {\r",
-							"    pm.expect(pm.response.text()).to.include(\"Anti-Hero\");\r",
-							"})\r",
-							"\r",
-							"pm.test(\"Verifica se o id da música 'Anti-Hero' é 157\", () => {\r",
-							"    let antiHeroObject;\r",
-							"    pm.response.json().forEach(item => {\r",
-							"        if(item.title===\"Anti-Hero\"){\r",
-							"            antiHeroObject = item;\r",
-							"        }\r",
-							"    });\r",
-							"\r",
-							"    pm.expect(antiHeroObject.song_id).to.eql(157);\r",
-							"\r",
-							"})\r",
-							"\r",
-							""
-						],
-						"type": "text/javascript",
-						"packages": {},
-						"requests": {}
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": "{{baseURL}}/albums/10"
-			},
-			"response": []
-		},
-		{
-			"name": "Buscar album inexistente",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status deve ser 404 Not Found\", function () {\r",
-							"    pm.response.to.have.status(404);\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Resposta deve ser JSON\", function () {\r",
-							"    pm.response.to.be.json;\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Verifica se a resposta de erro não é um array\", () => {\r",
-							"    pm.expect(pm.response.json()).to.not.be.an(\"array\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Verifica se a resposta contém uma mensagem de erro amigável\", () => {\r",
-							"    const response = pm.response.json();\r",
-							"    pm.expect(response).to.have.any.keys(\"message\", \"error\", \"detail\");\r",
-							"    pm.expect(response.error).to.include(\"does not exist\");\r",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {},
-						"requests": {}
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": "{{baseURL}}/albums/999"
-			},
-			"response": []
-		},
-		{
-			"name": "Buscar musica com parametro inesperado",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status deve ser 400 Bad Request ou 404 Not Found\", function () {\r",
-							"    pm.expect(pm.response.code).to.be.oneOf([400, 404]);\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Resposta deve ser JSON\", function () {\r",
-							"    pm.response.to.be.json;\r",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {},
-						"requests": {}
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": "{{baseURL}}/songs/abc"
-			},
-			"response": []
-		},
-		{
-			"name": "Buscar letra com parametro inesperado",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status deve ser 400 Bad Request\", function () {\r",
-							"    pm.response.to.have.status(400);\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Verifica se o erro bloqueia o envio de parágrafos\", () => {\r",
-							"    const responseText = pm.response.text();\r",
-							"    pm.expect(responseText).to.not.include(\"paragraph\"); \r",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {},
-						"requests": {}
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{baseURL}}/lyrics?shouldRandomizeLyrics=batata&numberOfParagraphs=-5",
-					"host": [
-						"{{baseURL}}"
-					],
-					"path": [
-						"lyrics"
-					],
-					"query": [
-						{
-							"key": "shouldRandomizeLyrics",
-							"value": "batata"
-						},
-						{
-							"key": "numberOfParagraphs",
-							"value": "-5"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Deletar album",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status deve ser 405 Method Not Allowed, 403 Forbidden\", function () {\r",
-							"    pm.expect(pm.response.code).to.be.oneOf([405, 403, 404]); \r",
-							"});\r",
-							"\r",
-							"pm.test(\"Garante que o álbum não foi retornado na resposta\", function () {\r",
-							"    const responseText = pm.response.text();\r",
-							"    pm.expect(responseText).to.not.include(\"Midnights\");\r",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {},
-						"requests": {}
-					}
-				}
-			],
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"url": "{{baseURL}}/albums/10"
-			},
-			"response": []
-		},
-		{
-			"name": "Buscar todas as músicas",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status deve ser 200 OK\", function () {",
-							"    pm.response.to.have.status(200);",
-							"})",
-							"",
-							"pm.test(\"Busca todas as músicas no array\", function () {",
-							"    const songs = pm.response.json();",
-							"    songs.forEach(function(musica){",
-							"        pm.expect(musica).to.have.property('song_id');",
-							"        pm.expect(musica).to.have.property('title');",
-							"    })",
-							"})"
-						],
-						"type": "text/javascript",
-						"packages": {},
-						"requests": {}
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": "{{baseURL}}/songs"
-			},
-			"response": []
-		},
-		{
-			"name": "Buscar músicas presentes no The Eras Tour",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status deve ser 200 OK\", function () {",
-							"    pm.response.to.have.status(200)",
-							"})",
-							"",
-							"pm.test(\"Garante que o setlist da The Eras Tour possui ID e Album\", function () {",
-							"    const df = pm.response.json()",
-							"",
-							"    const setlistErasTour = [",
-							"        \"Miss Americana & The Heartbreak Prince\",",
-							"        \"Cruel Summer\",",
-							"        \"The Man\",",
-							"        \"You Need To Calm Down\",",
-							"        \"Lover\",",
-							"        \"The Archer\",",
-							"        \"Fearless\",",
-							"        \"You Belong With Me\",",
-							"        \"Love Story\",",
-							"        \"willow\",",
-							"        \"marjorie\",",
-							"        \"champagne problems\",",
-							"        \"tolerate it\",",
-							"        \"...Ready For It?\",",
-							"        \"Delicate\",",
-							"        \"Don\\\\'t Blame Me\",",
-							"        \"Look What You Made Me Do\",",
-							"        \"Enchanted\",",
-							"        \"Long Live\",",
-							"        \"22 (Taylor’s version)\",",
-							"        \"We Are Never Ever Getting Back Together (Taylor’s version)\",",
-							"        \"I Knew You Were Trouble (Taylor’s version)\",",
-							"        \"All Too Well (Taylor’s version)\",",
-							"        \"the 1\",",
-							"        \"betty\",",
-							"        \"the last great american dynasty\",",
-							"        \"august\",",
-							"        \"illicit affairs\",",
-							"        \"my tears ricochet\",",
-							"        \"cardigan\",",
-							"        \"Style\",",
-							"        \"Blank Space\",",
-							"        \"Shake It Off\",",
-							"        \"Wildest Dreams\",",
-							"        \"Bad Blood\",",
-							"        \"Lavender Haze\",",
-							"        \"Anti-Hero\",",
-							"        \"Midnight Rain\",",
-							"        \"Vigilante Shit\",",
-							"        \"Bejeweled\",",
-							"        \"Mastermind\",",
-							"        \"Karma\",",
-							"        \"‘tis the damn season\",",
-							"        \"invisible string\"",
-							"    ]",
-							"",
-							"    const musicasFaltantes = []",
-							"",
-							"    setlistErasTour.forEach(function(hit) {",
-							"        const musicaEncontrada = df.find(function(musica) {",
-							"            return musica.title.trim().toLowerCase() === hit.trim().toLowerCase()",
-							"        })",
-							"",
-							"        if (musicaEncontrada === undefined) {",
-							"            console.log(\"Musica que deu problema e nao foi encontrada \" + hit)",
-							"            musicasFaltantes.push(hit)",
-							"        } else {",
-							"            pm.expect(musicaEncontrada).to.have.property(\"title\")",
-							"            pm.expect(musicaEncontrada).to.have.property(\"song_id\")",
-							"            pm.expect(musicaEncontrada).to.have.property(\"album_id\")",
-							"        }",
-							"    })",
-							"",
-							"    pm.expect(musicasFaltantes.length, \"Musicas faltando \" + musicasFaltantes.join(\", \")).to.eql(0)",
-							"})"
-						],
-						"type": "text/javascript",
-						"packages": {},
-						"requests": {}
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": "{{baseURL}}/songs"
-			},
-			"response": []
-		},
-		{
-			"name": "Busca música London Boy",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status deve ser 200 OK\", function () {",
-							"    pm.response.to.have.status(200)",
-							"})",
-							"",
-							"pm.test(\"Garante que nenhum titulo esta vazio\", function () {",
-							"    const songs = pm.response.json()",
-							"    songs.forEach(function (musica) {",
-							"        pm.expect(musica.title.trim().length).to.be.greaterThan(0)",
-							"    })",
-							"})"
-						],
-						"type": "text/javascript",
-						"packages": {},
-						"requests": {}
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": "{{baseURL}}/songs"
-			},
-			"response": []
-		},
-		{
-			"name": "Buscar letras sem quantidade de paragrafos",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status deve ser 400 Bad Request\", function () {",
-							"    pm.response.to.have.status(400)",
-							"})",
-							"",
-							"pm.test(\"Garante que nao retornou objeto com a letra\", function () {",
-							"    const df = pm.response.json()",
-							"    pm.expect(df).to.not.have.property(\"lyrics\")",
-							"})"
-						],
-						"type": "text/javascript",
-						"packages": {},
-						"requests": {}
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{baseURL}}/lyrics?shouldRandomizeLyrics=true",
-					"host": [
-						"{{baseURL}}"
-					],
-					"path": [
-						"lyrics"
-					],
-					"query": [
-						{
-							"key": "shouldRandomizeLyrics",
-							"value": "true"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Buscar letra passando texto no lugar do ID",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Erro por ID em formato de texto\", function () {",
-							"    pm.response.to.have.status(400)",
-							"})",
-							"",
-							"pm.test(\"Garante que a letra da musica nao foi devolvida\", function () {",
-							"    const responseText = pm.response.text()",
-							"    pm.expect(responseText).to.not.include(\"lyrics\")",
-							"})"
-						],
-						"type": "text/javascript",
-						"packages": {},
-						"requests": {}
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": "{{baseURL}}/lyrics/letras"
-			},
-			"response": []
-		},
-		{
-			"name": "Buscar letra aleatória com 3 parágrafos",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status deve ser 200 OK\", function () {",
-							"    pm.response.to.have.status(200)",
-							"})",
-							"",
-							"pm.test(\"Valida se a letra foi buscada com a quantidade correta de paragrafos\", function () {",
-							"    const df = pm.response.json()",
-							"    ",
-							"    pm.expect(df).to.have.property(\"lyrics\")",
-							"    pm.expect(df).to.have.property(\"num_paragraphs\")",
-							"    pm.expect(df.num_paragraphs).to.eql(3)",
-							"})"
-						],
-						"type": "text/javascript",
-						"packages": {},
-						"requests": {}
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{baseURL}}/lyrics?shouldRandomizeLyrics=true&numberOfParagraphs=3",
-					"host": [
-						"{{baseURL}}"
-					],
-					"path": [
-						"lyrics"
-					],
-					"query": [
-						{
-							"key": "shouldRandomizeLyrics",
-							"value": "true"
-						},
-						{
-							"key": "numberOfParagraphs",
-							"value": "3"
-						}
-					]
-				}
-			},
-			"response": []
-		}
-	],
-	"event": [
-		{
-			"listen": "prerequest",
-			"script": {
-				"type": "text/javascript",
-				"packages": {},
-				"requests": {},
-				"exec": [
-					""
-				]
-			}
-		},
-		{
-			"listen": "test",
-			"script": {
-				"type": "text/javascript",
-				"packages": {},
-				"requests": {},
-				"exec": [
-					""
-				]
-			}
-		}
-	],
-	"variable": [
-		{
-			"key": "baseURL",
-			"value": "https://taylor-swift-api.sarbo.workers.dev"
-		}
-	]
+  "info": {
+    "_postman_id": "bea438b7-dad0-44db-ab29-705547a34093",
+    "name": "taylor-swift-api-testing",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "27989098"
+  },
+  "item": [
+    {
+      "name": "Buscar todos os álbuns",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('T101 - Status deve ser 200 OK', function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "pm.test('T102 - Resposta deve ser JSON', function () {\r",
+              "    pm.response.to.be.json;\r",
+              "});\r",
+              "\r",
+              "pm.test(\"T103 - Verifica se a resposta é um array\", () => {\r",
+              "    pm.expect(pm.response.json()).to.be.an(\"array\");\r",
+              "});\r",
+              "\r",
+              "pm.test(\"T104 - Verifica se a resposta contém os 12 álbums\", () => {\r",
+              "    pm.expect(Object.keys(pm.response.json()).length).to.eql(12);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"T105 - Verifica se todos os álbums têm título\", () => {\r",
+              "    pm.response.json().forEach(item => {\r",
+              "        pm.expect(item).to.have.property(\"title\");\r",
+              "    })\r",
+              "})\r",
+              "\r",
+              "pm.test(\"T106 - Verifica se a resposta contém o álbum Midnights\", () => {\r",
+              "    pm.expect(pm.response.text()).to.include(\"Midnights\");\r",
+              "})\r",
+              "\r",
+              "pm.test(\"T107 - Verifica se a data de lançamento do álbum Midnights é 21/10/2022\", () => {\r",
+              "    const response = pm.response.json();\r",
+              "    const correctReleaseDate = new Date(\"2022-10-21\");\r",
+              "    const midnightsResponseReleaseDate = new Date(response[9].release_date);\r",
+              "    pm.expect(midnightsResponseReleaseDate).to.include(correctReleaseDate);\r",
+              "})"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseURL}}/albums",
+          "host": [
+            "{{baseURL}}"
+          ],
+          "path": [
+            "albums"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Busca as músicas do álbum Midnights",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('T108 - Status deve ser 200 OK', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('T109 - Resposta deve ser JSON', function () {",
+              "    pm.response.to.be.json;",
+              "});",
+              "",
+              "pm.test(\"T110 - Verifica se a resposta é um array\", () => {",
+              "    pm.expect(pm.response.json()).to.be.an(\"array\");",
+              "});",
+              "",
+              "pm.test(\"T111 - Verifica se a resposta contém as 22 músicas\", () => {",
+              "    pm.expect(Object.keys(pm.response.json()).length).to.eql(22);",
+              "});",
+              "",
+              "pm.test(\"T112 - Verifica se todas as músicas têm título\", () => {",
+              "    pm.response.json().forEach(item => {",
+              "        pm.expect(item).to.have.property(\"title\");",
+              "    })",
+              "})",
+              "",
+              "pm.test(\"T113 - Verifica se a resposta contém a música 'Anti-Hero\", () => {",
+              "    pm.expect(pm.response.text()).to.include(\"Anti-Hero\");",
+              "})",
+              "",
+              "pm.test(\"T114 - Verifica se o id da música 'Anti-Hero' é 157\", () => {",
+              "    let antiHeroObject;",
+              "    pm.response.json().forEach(item => {",
+              "        if(item.title===\"Anti-Hero\"){",
+              "            antiHeroObject = item;",
+              "        }",
+              "    });",
+              "",
+              "    pm.expect(antiHeroObject.song_id).to.eql(157);",
+              "",
+              "})"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseURL}}/albums/10",
+          "host": [
+            "{{baseURL}}"
+          ],
+          "path": [
+            "albums",
+            "10"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Buscar album inexistente",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"T201 - Status deve ser 404 Not Found\", function () {",
+              "    pm.response.to.have.status(404);",
+              "});",
+              "",
+              "pm.test(\"T202 - Resposta deve ser JSON\", function () {",
+              "    pm.response.to.be.json;",
+              "});",
+              "",
+              "pm.test(\"T203 - Verifica se a resposta de erro não é um array\", () => {",
+              "    pm.expect(pm.response.json()).to.not.be.an(\"array\");",
+              "});",
+              "",
+              "pm.test(\"T204 - Verifica se a resposta contém uma mensagem de erro amigável\", () => {",
+              "    const response = pm.response.json();",
+              "    pm.expect(response).to.have.any.keys(\"message\", \"error\", \"detail\");",
+              "    pm.expect(response.error).to.include(\"does not exist\");",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseURL}}/albums/999",
+          "host": [
+            "{{baseURL}}"
+          ],
+          "path": [
+            "albums",
+            "999"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Buscar musica com parametro inesperado",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"T205 - Status deve ser 400 Bad Request ou 404 Not Found\", function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([400, 404]);",
+              "});",
+              "",
+              "pm.test(\"T206 - Resposta deve ser JSON\", function () {",
+              "    pm.response.to.be.json;",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseURL}}/songs/abc",
+          "host": [
+            "{{baseURL}}"
+          ],
+          "path": [
+            "songs",
+            "abc"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Buscar letra com parametro inesperado",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"T207 - Status deve ser 400 Bad Request\", function () {",
+              "    pm.response.to.have.status(400);",
+              "});",
+              "",
+              "pm.test(\"T208 - Verifica se o erro bloqueia o envio de parágrafos\", () => {",
+              "    const responseText = pm.response.text();",
+              "    pm.expect(responseText).to.not.include(\"paragraph\"); ",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseURL}}/lyrics?shouldRandomizeLyrics=batata&numberOfParagraphs=-5",
+          "host": [
+            "{{baseURL}}"
+          ],
+          "path": [
+            "lyrics"
+          ],
+          "query": [
+            {
+              "key": "shouldRandomizeLyrics",
+              "value": "batata"
+            },
+            {
+              "key": "numberOfParagraphs",
+              "value": "-5"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Deletar album",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"T209 - Status deve ser 405 Method Not Allowed, 403 Forbidden\", function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([405, 403, 404]); ",
+              "});",
+              "",
+              "pm.test(\"T210 - Garante que o álbum não foi retornado na resposta\", function () {",
+              "    const responseText = pm.response.text();",
+              "    pm.expect(responseText).to.not.include(\"Midnights\");",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseURL}}/albums/10",
+          "host": [
+            "{{baseURL}}"
+          ],
+          "path": [
+            "albums",
+            "10"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Buscar todas as músicas",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"T115 - Status deve ser 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "})",
+              "",
+              "pm.test(\"T116 - Busca todas as músicas no array\", function () {",
+              "    const songs = pm.response.json();",
+              "    songs.forEach(function(musica){",
+              "        pm.expect(musica).to.have.property('song_id');",
+              "        pm.expect(musica).to.have.property('title');",
+              "    })",
+              "})"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseURL}}/songs",
+          "host": [
+            "{{baseURL}}"
+          ],
+          "path": [
+            "songs"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Buscar músicas presentes no The Eras Tour",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"T117 - Status deve ser 200 OK\", function () {",
+              "    pm.response.to.have.status(200)",
+              "})",
+              "",
+              "pm.test(\"T118 - Garante que o setlist da The Eras Tour possui ID e Album\", function () {",
+              "    const df = pm.response.json()",
+              "",
+              "    const setlistErasTour = [",
+              "        \"Miss Americana & The Heartbreak Prince\",",
+              "        \"Cruel Summer\",",
+              "        \"The Man\",",
+              "        \"You Need To Calm Down\",",
+              "        \"Lover\",",
+              "        \"The Archer\",",
+              "        \"Fearless\",",
+              "        \"You Belong With Me\",",
+              "        \"Love Story\",",
+              "        \"willow\",",
+              "        \"marjorie\",",
+              "        \"champagne problems\",",
+              "        \"tolerate it\",",
+              "        \"...Ready For It?\",",
+              "        \"Delicate\",",
+              "        \"Don\\\\'t Blame Me\",",
+              "        \"Look What You Made Me Do\",",
+              "        \"Enchanted\",",
+              "        \"Long Live\",",
+              "        \"22 (Taylor’s version)\",",
+              "        \"We Are Never Ever Getting Back Together (Taylor’s version)\",",
+              "        \"I Knew You Were Trouble (Taylor’s version)\",",
+              "        \"All Too Well (Taylor’s version)\",",
+              "        \"the 1\",",
+              "        \"betty\",",
+              "        \"the last great american dynasty\",",
+              "        \"august\",",
+              "        \"illicit affairs\",",
+              "        \"my tears ricochet\",",
+              "        \"cardigan\",",
+              "        \"Style\",",
+              "        \"Blank Space\",",
+              "        \"Shake It Off\",",
+              "        \"Wildest Dreams\",",
+              "        \"Bad Blood\",",
+              "        \"Lavender Haze\",",
+              "        \"Anti-Hero\",",
+              "        \"Midnight Rain\",",
+              "        \"Vigilante Shit\",",
+              "        \"Bejeweled\",",
+              "        \"Mastermind\",",
+              "        \"Karma\",",
+              "        \"‘tis the damn season\",",
+              "        \"invisible string\"",
+              "    ]",
+              "",
+              "    const musicasFaltantes = []",
+              "",
+              "    setlistErasTour.forEach(function(hit) {",
+              "        const musicaEncontrada = df.find(function(musica) {",
+              "            return musica.title.trim().toLowerCase() === hit.trim().toLowerCase()",
+              "        })",
+              "",
+              "        if (musicaEncontrada === undefined) {",
+              "            console.log(\"Musica que deu problema e nao foi encontrada \" + hit)",
+              "            musicasFaltantes.push(hit)",
+              "        } else {",
+              "            pm.expect(musicaEncontrada).to.have.property(\"title\")",
+              "            pm.expect(musicaEncontrada).to.have.property(\"song_id\")",
+              "            pm.expect(musicaEncontrada).to.have.property(\"album_id\")",
+              "        }",
+              "    })",
+              "",
+              "    pm.expect(musicasFaltantes.length, \"Musicas faltando \" + musicasFaltantes.join(\", \")).to.eql(0)",
+              "})"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseURL}}/songs",
+          "host": [
+            "{{baseURL}}"
+          ],
+          "path": [
+            "songs"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Busca música London Boy",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"T119 - Status deve ser 200 OK\", function () {",
+              "    pm.response.to.have.status(200)",
+              "})",
+              "",
+              "pm.test(\"T120 - Garante que nenhum titulo esta vazio\", function () {",
+              "    const songs = pm.response.json()",
+              "    songs.forEach(function (musica) {",
+              "        pm.expect(musica.title.trim().length).to.be.greaterThan(0)",
+              "    })",
+              "})"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseURL}}/songs",
+          "host": [
+            "{{baseURL}}"
+          ],
+          "path": [
+            "songs"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Buscar letras sem quantidade de paragrafos",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"T211 - Status deve ser 400 Bad Request\", function () {",
+              "    pm.response.to.have.status(400)",
+              "})",
+              "",
+              "pm.test(\"T212 - Garante que nao retornou objeto com a letra\", function () {",
+              "    const df = pm.response.json()",
+              "    pm.expect(df).to.not.have.property(\"lyrics\")",
+              "})"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseURL}}/lyrics?shouldRandomizeLyrics=true",
+          "host": [
+            "{{baseURL}}"
+          ],
+          "path": [
+            "lyrics"
+          ],
+          "query": [
+            {
+              "key": "shouldRandomizeLyrics",
+              "value": "true"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Buscar letra passando texto no lugar do ID",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"T213 - Erro por ID em formato de texto\", function () {",
+              "    pm.response.to.have.status(400)",
+              "})",
+              "",
+              "pm.test(\"T214 - Garante que a letra da musica nao foi devolvida\", function () {",
+              "    const responseText = pm.response.text()",
+              "    pm.expect(responseText).to.not.include(\"lyrics\")",
+              "})"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseURL}}/lyrics/letras",
+          "host": [
+            "{{baseURL}}"
+          ],
+          "path": [
+            "lyrics",
+            "letras"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Buscar letra aleatória com 3 parágrafos",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"T121 - Status deve ser 200 OK\", function () {",
+              "    pm.response.to.have.status(200)",
+              "})",
+              "",
+              "pm.test(\"T122 - Valida se a letra foi buscada com a quantidade correta de paragrafos\", function () {",
+              "    const df = pm.response.json()",
+              "    ",
+              "    pm.expect(df).to.have.property(\"lyrics\")",
+              "    pm.expect(df).to.have.property(\"num_paragraphs\")",
+              "    pm.expect(df.num_paragraphs).to.eql(3)",
+              "})"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseURL}}/lyrics?shouldRandomizeLyrics=true&numberOfParagraphs=3",
+          "host": [
+            "{{baseURL}}"
+          ],
+          "path": [
+            "lyrics"
+          ],
+          "query": [
+            {
+              "key": "shouldRandomizeLyrics",
+              "value": "true"
+            },
+            {
+              "key": "numberOfParagraphs",
+              "value": "3"
+            }
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseURL",
+      "value": "https://taylor-swift-api.sarbo.workers.dev"
+    }
+  ]
 }
