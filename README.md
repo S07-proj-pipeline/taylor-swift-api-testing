@@ -9,7 +9,7 @@ Júlio César Taranto Azevedo | 454 <br>
 Lídia Carolina de Andrade Rosa | 641 <br> 
 Maria Eduarda Constância Rocha Moreira | 710
 
-O projeto utiliza a [Taylor Swift API](https://github.com/sarbor/taylor_swift_api) criada pelo usuário [*Sarbor*](https://github.com/sarbor) no Github, sendo uma AP REST pública e gratuita.
+O projeto utiliza a [Taylor Swift API](https://github.com/sarbor/taylor_swift_api) criada pelo usuário [*Sarbor*](https://github.com/sarbor) no Github, sendo uma API REST pública e gratuita.
 Foi utilizada a ferramenta Newman para execução dos testes via linha de comando no terminal.
 
 As informações sobre endpoints foram retiradas do README do repositório do autor.
@@ -80,7 +80,7 @@ O relatório é gerado na raiz do projeto.
 
 ## Organização do projeto em grupo
 
-Para versionamento, foi utilizado o GitHub com branches. Cada integrante criou sua própria branch, e depois foi realizado um Pull Request e merge para a branch 'develop'. Após finalização do projeto, foi feito o merge para a branch 'main'.
+Para versionamento, foi utilizado git com branches. Cada integrante criou sua própria branch, e depois foi realizado um Pull Request e merge para a branch 'develop'. Após finalização do projeto, foi feito o merge para a branch 'main'.
 
 ## Testes de performance
 Como extra, foram criados testes de estresse e de carga utilizando a ferramenta K6.
