@@ -1,9 +1,10 @@
 {
   "info": {
-    "_postman_id": "bea438b7-dad0-44db-ab29-705547a34093",
+    "_postman_id": "3fa51791-7ec0-4d6d-8769-e41fc0c0f759",
     "name": "taylor-swift-api-testing",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "27989098"
+    "_exporter_id": "53795167",
+    "_collection_link": "https://go.postman.co/collection/53795167-3fa51791-7ec0-4d6d-8769-e41fc0c0f759?source=collection_link"
   },
   "item": [
     {
@@ -168,9 +169,8 @@
               "});",
               "",
               "pm.test(\"T204 - Verifica se a resposta contém uma mensagem de erro amigável\", () => {",
-              "    const response = pm.response.json();",
-              "    pm.expect(response).to.have.any.keys(\"message\", \"error\", \"detail\");",
-              "    pm.expect(response.error).to.include(\"does not exist\");",
+              "    pm.expect(pm.response.json()).to.have.any.keys(\"error\");",
+              "    pm.expect(pm.response.json().error).to.include(\"does not exist\");",
               "});"
             ],
             "type": "text/javascript",
@@ -181,8 +181,12 @@
         {
           "listen": "prerequest",
           "script": {
-            "exec": [],
-            "type": "text/javascript"
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
           }
         }
       ],
@@ -209,8 +213,8 @@
           "listen": "test",
           "script": {
             "exec": [
-              "pm.test(\"T205 - Status deve ser 400 Bad Request ou 404 Not Found\", function () {",
-              "    pm.expect(pm.response.code).to.be.oneOf([400, 404]);",
+              "pm.test(\"T205 - Status deve ser 400 Bad Request\", function () {",
+              "    pm.response.to.have.status(400);",
               "});",
               "",
               "pm.test(\"T206 - Resposta deve ser JSON\", function () {",
@@ -225,8 +229,12 @@
         {
           "listen": "prerequest",
           "script": {
-            "exec": [],
-            "type": "text/javascript"
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
           }
         }
       ],
@@ -258,8 +266,7 @@
               "});",
               "",
               "pm.test(\"T208 - Verifica se o erro bloqueia o envio de parágrafos\", () => {",
-              "    const responseText = pm.response.text();",
-              "    pm.expect(responseText).to.not.include(\"paragraph\"); ",
+              "    pm.expect(pm.response.text()).to.not.include(\"paragraph\"); ",
               "});"
             ],
             "type": "text/javascript",
@@ -270,8 +277,12 @@
         {
           "listen": "prerequest",
           "script": {
-            "exec": [],
-            "type": "text/javascript"
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
           }
         }
       ],
@@ -307,13 +318,12 @@
           "listen": "test",
           "script": {
             "exec": [
-              "pm.test(\"T209 - Status deve ser 405 Method Not Allowed, 403 Forbidden\", function () {",
-              "    pm.expect(pm.response.code).to.be.oneOf([405, 403, 404]); ",
+              "pm.test(\"T209 - Status deve ser 404 Not Found\", function () {",
+              "    pm.response.to.have.status(404);",
               "});",
               "",
-              "pm.test(\"T210 - Garante que o álbum não foi retornado na resposta\", function () {",
-              "    const responseText = pm.response.text();",
-              "    pm.expect(responseText).to.not.include(\"Midnights\");",
+              "pm.test(\"T210 - Verifica se a resposta é a mensagem padrão 404 Not Found\", function () {",
+              "    pm.expect(pm.response.text()).to.include(\"404 Not Found\");",
               "});"
             ],
             "type": "text/javascript",
@@ -324,8 +334,12 @@
         {
           "listen": "prerequest",
           "script": {
-            "exec": [],
-            "type": "text/javascript"
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
           }
         }
       ],
