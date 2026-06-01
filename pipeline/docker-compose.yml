@@ -1,0 +1,51 @@
+networks:
+  pipeline-net:
+    driver: bridge
+    name: pipeline-net
+
+volumes:
+  jenkins-data:
+    name: s07-jenkins-data
+
+services:
+
+  jenkins:
+    build:
+      context: ..
+      dockerfile: pipeline/Dockerfile
+    container_name: jenkins
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins-data:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ..:/workspace:ro
+    networks:
+      - pipeline-net
+    environment:
+      - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
+      - DISPLAY=:99
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/login"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+#  newman-runner:
+#    build:
+#      context: ..
+#      dockerfile: pipeline_docker/Dockerfile.jenkins.newman
+#    container_name: newman-runner
+#    restart: unless-stopped
+#    volumes:
+#      - relatorios-data:/relatorios
+#    networks:
+#      - pipeline-net
+#    depends_on:
+#      jenkins:
+#        condition: service_healthy
+
+
