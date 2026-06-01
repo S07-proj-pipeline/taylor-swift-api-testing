@@ -17,15 +17,13 @@ pipeline {
     stages {
 
         stage('Testes') {
-            parallel {
-
                 stage('API — Newman') {
                     steps {
-                        echo "Instalando dependências do Newman..."
+                        echo "Instalando dependências"
                         dir('api-testing') {
                             sh 'npm ci'
                         }
-                        echo "Executando testes de API (PokéAPI)..."
+                        echo "Executando testes"
                         dir('api-testing') {
                             sh 'npm test'
                         }
@@ -35,12 +33,8 @@ pipeline {
                         failure { echo "API: FALHAS NAS REQUISIÇÕES" }
                     }
                 }
-
-            }
         }
-
     }
-
     post {
         success { echo "Pipeline concluído com SUCESSO!" }
         failure { echo "Pipeline FALHOU. Verificar logs acima." }
@@ -52,5 +46,4 @@ pipeline {
             echo "Duração  : ${currentBuild.durationString}"
         }
     }
-
 }
