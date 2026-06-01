@@ -12,7 +12,7 @@ services:
   jenkins:
     build:
       context: ..
-      dockerfile: pipeline/Dockerfile
+      dockerfile: pipeline/Dockerfile.jenkins
     container_name: jenkins
     restart: unless-stopped
     ports:
