@@ -11,61 +11,13 @@ pipeline {
     }
 
     environment {
-        NOME_PIPELINE = 'S07 — Testes Automatizados'
+        NOME_PIPELINE = 'taylor-swift-api-testing-pipeline'
     }
 
     stages {
 
         stage('Testes') {
             parallel {
-
-                stage('Cypress — sem BDD') {
-                    environment {
-                        CYPRESS_defaultCommandTimeout = '10000'
-                    }
-                    steps {
-                        echo "Instalando dependências do Cypress..."
-                        dir('cypress-project') {
-                            sh 'npm ci'
-                        }
-                        echo "Executando testes sem BDD (Page Object Model)..."
-                        dir('cypress-project') {
-                            sh 'npm run test:sem-bdd'
-                        }
-                    }
-                    post {
-                        success { echo "Cypress sem BDD: TODOS OS TESTES PASSARAM" }
-                        failure {
-                            echo "Cypress sem BDD: FALHAS DETECTADAS"
-                            archiveArtifacts artifacts: 'cypress-project/cypress/screenshots/**',
-                                             allowEmptyArchive: true
-                        }
-                    }
-                }
-
-                stage('Cypress — BDD') {
-                    environment {
-                        CYPRESS_defaultCommandTimeout = '10000'
-                    }
-                    steps {
-                        echo "Instalando dependências do Cypress..."
-                        dir('cypress-project') {
-                            sh 'npm ci'
-                        }
-                        echo "Executando testes BDD (Gherkin/Cucumber)..."
-                        dir('cypress-project') {
-                            sh 'npm run test:bdd'
-                        }
-                    }
-                    post {
-                        success { echo "Cypress BDD: TODOS OS CENÁRIOS PASSARAM" }
-                        failure {
-                            echo "Cypress BDD: CENÁRIOS COM FALHA"
-                            archiveArtifacts artifacts: 'cypress-project/cypress/screenshots/**',
-                                             allowEmptyArchive: true
-                        }
-                    }
-                }
 
                 stage('API — Newman') {
                     steps {
@@ -94,7 +46,7 @@ pipeline {
         failure { echo "Pipeline FALHOU. Verificar logs acima." }
         unstable { echo "Pipeline INSTÁVEL — alguns testes falharam." }
         always {
-            echo "Pipeline : ${env.NOME_PIPELINE ?: 'S07 — Testes Automatizados'}"
+            echo "Pipeline : ${env.NOME_PIPELINE ?: 'taylor-swift-api-testing-pipeline'}"
             echo "Build    : #${BUILD_NUMBER}"
             echo "Resultado: ${currentBuild.currentResult}"
             echo "Duração  : ${currentBuild.durationString}"
