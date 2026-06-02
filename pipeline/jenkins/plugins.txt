@@ -13,3 +13,6 @@ timestamper:latest
 build-timeout:latest
 email-ext:latest
 mailer:latest
+configuration-as-code:latest
+job-dsl:latest
+

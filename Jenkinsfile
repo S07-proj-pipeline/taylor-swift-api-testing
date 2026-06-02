@@ -15,26 +15,28 @@ pipeline {
     }
 
     stages {
-
-        stage('Testes') {
-                stage('API — Newman') {
-                    steps {
-                        echo "Instalando dependências"
-                        dir('api-testing') {
-                            sh 'npm ci'
-                        }
-                        echo "Executando testes"
-                        dir('api-testing') {
-                            sh 'npm test'
-                        }
-                    }
-                    post {
-                        success { echo "API: TODAS AS REQUISIÇÕES PASSARAM" }
-                        failure { echo "API: FALHAS NAS REQUISIÇÕES" }
-                    }
-                }
-        }
+         stage('Testes') {
+             stages {
+                 stage('API — Newman') {
+                     steps {
+                         echo "Instalando dependências"
+                         dir('pipeline') {
+                             sh 'npm ci'
+                         }
+                         echo "Executando testes"
+                         dir('pipeline') {
+                             sh 'npm test'
+                         }
+                     }
+                     post {
+                         success { echo "API: TODAS AS REQUISIÇÕES PASSARAM" }
+                         failure { echo "API: FALHAS NAS REQUISIÇÕES" }
+                     }
+                 }
+             }
+         }
     }
+
     post {
         success { echo "Pipeline concluído com SUCESSO!" }
         failure { echo "Pipeline FALHOU. Verificar logs acima." }

@@ -20,10 +20,10 @@ jobs:
                           remote {
                               url('https://github.com/S07-proj-pipeline/taylor-swift-api-testing')
                           }
-                          branches('develop') 
+                          branches('develop')
                       }
                   }
-                  scriptPath('../Jenkinsfile')
+                  scriptPath('Jenkinsfile')
               }
           }
       }
