@@ -2,6 +2,8 @@
 
 FROM jenkins/jenkins:lts-jdk17
 
+ENV CASC_JENKINS_CONFIG="/var/jenkins_home/casc.yaml"
+
 USER root
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -47,6 +49,16 @@ RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 COPY pipeline/jenkins/plugins.txt /usr/share/jenkins/ref/plugins.txt
 RUN jenkins-plugin-cli --plugin-file /usr/share/jenkins/ref/plugins.txt
+
+RUN jenkins-plugin-cli --plugins \
+    "configuration-as-code \
+    job-dsl \
+    git \
+    github \
+    workflow-aggregator \
+    docker-workflow"
+
+COPY pipeline/casc.yaml /var/jenkins_home/casc.yaml
 
 EXPOSE 8080 50000
 

@@ -1,0 +1,29 @@
+jenkins:
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: "admin"
+          password: "admin"
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: false
+
+jobs:
+  - script: >
+      pipelineJob('taylor-swift-api-testing-pipeline') {
+          description('Pipeline - Taylor Swift API')
+          definition {
+              cpsScm {
+                  scm {
+                      git {
+                          remote {
+                              url('https://github.com/S07-proj-pipeline/taylor-swift-api-testing')
+                          }
+                          branches('develop') 
+                      }
+                  }
+                  scriptPath('../Jenkinsfile')
+              }
+          }
+      }
