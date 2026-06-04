@@ -7,6 +7,9 @@ volumes:
   jenkins-data:
     name: s07-jenkins-data
 
+  reports_data:
+    name: s07-nginx-reports-data
+
 services:
 
   jenkins:
@@ -34,6 +37,19 @@ services:
       timeout: 10s
       retries: 5
       start_period: 60s
+
+  # Portal Nginx Customizado
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    container_name: nginx_relatorios
+    ports:
+      # Para acessar não precisa especificar a porta depois do IP: http://localhost
+      - "80:80"
+    volumes:
+      # Mapeia o volume para a subpasta /relatorios da página inicial
+      - reports_data:/usr/share/nginx/html/relatorios
 
 #  newman-runner:
 #    build:
