@@ -33,6 +33,20 @@ pipeline {
                          failure { echo "API: FALHAS NAS REQUISIÇÕES" }
                      }
                  }
+
+                 stage('Carga e Performance — k6') {
+                    steps {
+                      echo "Executando teste de carga com k6"
+                      dir('pipeline/k6') {
+                          sh 'k6 run load-test.js'
+                          sh 'k6 run stress-test.js'
+                      }
+                    }
+                    post {
+                      success { echo "CARGA: Sucesso" }
+                      failure { echo "CARGA: Falha" }
+                    }
+                }
              }
          }
     }

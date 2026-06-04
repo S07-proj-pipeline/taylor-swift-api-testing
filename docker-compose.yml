@@ -50,6 +50,21 @@ services:
       # Mapeia o volume para a subpasta /relatorios da página inicial
       - reports_data:/usr/share/nginx/html/relatorios
 
+  k6:
+    image: grafana/k6:latest
+    container_name: k6
+    networks:
+      - pipeline-net
+    volumes:
+      - ..:/workspace:ro
+      - reports_data:/reports
+    working_dir: /workspace/pipeline/k6
+    entrypoint: ["tail", "-f", "/dev/null"]
+    depends_on:
+      jenkins:
+        condition: service_healthy
+
+
 #  newman-runner:
 #    build:
 #      context: ..
