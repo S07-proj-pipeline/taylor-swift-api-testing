@@ -44,13 +44,13 @@ RUN curl -fsSL https://download.docker.com/linux/debian/gpg \
 
 RUN groupadd -f docker && usermod -aG docker jenkins
 
-COPY pipeline/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-COPY pipeline/jenkins/plugins.txt /usr/share/jenkins/ref/plugins.txt
+COPY plugins.txt /usr/share/jenkins/ref/plugins.txt
 RUN jenkins-plugin-cli --plugin-file /usr/share/jenkins/ref/plugins.txt
 
-COPY pipeline/casc.yaml /var/jenkins_home/casc.yaml
+COPY casc.yaml /var/jenkins_home/casc.yaml
 
 EXPOSE 8080 50000
 
