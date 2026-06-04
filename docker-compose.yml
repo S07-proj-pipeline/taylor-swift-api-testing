@@ -58,7 +58,6 @@ services:
     volumes:
       - ..:/workspace:ro
       - reports_data:/reports
-    working_dir: /workspace/pipeline/k6
     entrypoint: ["tail", "-f", "/dev/null"]
     depends_on:
       jenkins:

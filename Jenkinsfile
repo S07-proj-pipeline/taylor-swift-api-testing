@@ -37,7 +37,7 @@ pipeline {
                  stage('Carga e Performance — k6') {
                     steps {
                       echo "Executando teste de carga com k6"
-                      dir('pipeline/k6') {
+                      dir('k6') {
                           sh 'k6 run load-test.js'
                           sh 'k6 run stress-test.js'
                       }
