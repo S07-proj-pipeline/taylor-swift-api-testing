@@ -23,7 +23,6 @@ services:
       - "50000:50000"
     volumes:
       - jenkins-data:/var/jenkins_home
-      - ./casc.yaml:/var/jenkins_home/casc.yaml:ro
       - /var/run/docker.sock:/var/run/docker.sock
       - .:/workspace:ro
     networks:
