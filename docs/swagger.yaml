@@ -1,0 +1,82 @@
+openapi: 3.0.0
+info:
+  title: Taylor Swift API
+  description:  Informações sobre a cantora Taylor Swift, como todos os seus álbuns, músicas e letras.
+  version: 1.0.0
+
+servers:
+  - url: https://taylor-swift-api.sarbo.workers.dev
+
+paths:
+  /albums:
+    get:
+      summary: Lista todos os álbuns
+      responses:
+        '200':
+          description: Lista retornada com sucesso
+
+  /albums/{albumID}:
+    get:
+      summary: Retorna músicas de um álbum específico
+      parameters:
+        - name: albumID
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Músicas do álbum retornadas com sucesso
+
+  /songs:
+    get:
+      summary: Lista todas as músicas
+      responses:
+        '200':
+          description: Lista de músicas retornada com sucesso
+
+  /songs/{songID}:
+    get:
+      summary: Retorna uma música específica
+      parameters:
+        - name: songID
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Música retornada com sucesso
+
+  /lyrics/{songID}:
+    get:
+      summary: Retorna a letra de uma música
+      parameters:
+        - name: songID
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Letra retornada com sucesso
+
+  /lyrics:
+    get:
+      summary: Retorna trechos de letras
+      parameters:
+        - name: numberOfParagraphs
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: shouldRandomizeLyrics
+          in: query
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Letras retornadas com sucesso
+
+
