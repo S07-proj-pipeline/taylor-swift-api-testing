@@ -36,7 +36,6 @@ services:
       - EMAILS_DESTINO=${EMAILS_DESTINO}
       - MODO_ENVIO=${MODO_ENVIO}
       - REMETENTE_REAL=${REMETENTE_REAL}
-      - SENHA_REAL=${SENHA_REAL}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/login"]
       interval: 30s
@@ -89,11 +88,24 @@ services:
       jenkins:
         condition: service_healthy
       
+  # Container para notificação local (Simula o envio de e-mail)
   mailhog:
     image: mailhog/mailhog:latest
     container_name: mailhog_server
     ports:
       - "8025:8025" # Interface web para ver os e-mails
-      - "1025:1025" # Porta SMTP para o script Python
+    networks:
+      - pipeline-net
+
+  # Container para notificação real
+  smtp-relay:
+    image: bytemark/smtp
+    container_name: smtp_relay
+    restart: unless-stopped
+    environment:
+      - RELAY_HOST=${SMTP_SERVIDOR}
+      - RELAY_PORT=587
+      - RELAY_USERNAME=${REMETENTE_REAL}
+      - RELAY_PASSWORD=${SENHA_REAL}
     networks:
       - pipeline-net
