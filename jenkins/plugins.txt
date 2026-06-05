@@ -15,5 +15,3 @@ email-ext:latest
 mailer:latest
 configuration-as-code:latest
 job-dsl:latest
-zip:latest
-
