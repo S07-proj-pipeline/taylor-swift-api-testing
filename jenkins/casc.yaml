@@ -8,6 +8,8 @@ jenkins:
   authorizationStrategy:
     loggedInUsersCanDoAnything:
       allowAnonymousRead: true
+  location:
+    url: "https://nonnegligent-jamarion-overheartily.ngrok-free.dev/"
   crumbIssuer:
     standard:
       excludeClientIPFromCrumb: true
