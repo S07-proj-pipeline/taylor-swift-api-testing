@@ -74,12 +74,13 @@ pipeline {
                  failure {
                      sh 'echo "Falha na geração dos Artefatos no stage (Build/Empacotamento)" >> falhas.txt'
                  }
+             }
          }
 
          stage('Notification') {
             steps {
                 echo "Enviando e-mail de notificação dos relatórios..."
-                
+
                 withEnv(["PIPELINE_STATUS=${currentBuild.currentResult}"]) {
                     sh 'python3 send_email.py'
                 }
