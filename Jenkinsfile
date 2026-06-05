@@ -44,10 +44,25 @@ pipeline {
                 }
              }
          }
+         stage('Build') {
+             steps {
+                     sh 'mkdir -p artifacts'
+
+                     sh 'zip -r artifacts/projeto-s07.zip . -x "*.git*" "*node_modules*" "artifacts/*"'
+
+                     sh 'cp -r /reports/* artifacts/ 2>/dev/null || true'
+
+                     writeFile file: 'artifacts/build-info.txt', text: "BUILD=${BUILD_NUMBER}"
+                 }
+         }
+
     }
 
     post {
-        success { echo "Pipeline concluído com SUCESSO!" }
+        success {
+          echo "Pipeline concluído com SUCESSO!"
+          archiveArtifacts artifacts: 'artifacts/projeto-s07.zip, artifacts/*.html, artifacts/*.json', fingerprint: true
+        }
         failure { echo "Pipeline FALHOU. Verificar logs acima." }
         unstable { echo "Pipeline INSTÁVEL — alguns testes falharam." }
         always {
