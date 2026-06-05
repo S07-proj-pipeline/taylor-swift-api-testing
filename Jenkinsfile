@@ -52,6 +52,13 @@ pipeline {
                  }
          }
 
+         stage('Notification') {
+            steps {
+                echo "Enviando e-mail de notificação dos relatórios..."
+                sh 'python3 send_email.py'
+            }
+        }
+
     }
 
     post {
