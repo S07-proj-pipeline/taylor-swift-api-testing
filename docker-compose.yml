@@ -53,12 +53,16 @@ services:
   k6:
     image: grafana/k6:latest
     container_name: k6
+    user: root
     networks:
       - pipeline-net
     volumes:
-      - ..:/workspace:ro
+      - type: bind
+        source: .
+        target: /scripts
+        read_only: true
       - reports_data:/reports
-    entrypoint: ["tail", "-f", "/dev/null"]
+    entrypoint: [ "/bin/ash", "-c", "chmod 777 /reports && tail -f /dev/null" ]
     depends_on:
       jenkins:
         condition: service_healthy
