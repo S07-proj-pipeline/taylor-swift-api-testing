@@ -15,21 +15,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gnupg \
     lsb-release \
     gosu \
-    xvfb \
-    xauth \
-    libgtk2.0-0 \
-    libgtk-3-0 \
-    libgbm1 \
-    libnss3 \
-    libxss1 \
-    libasound2 \
-    libxtst6 \
-    libnotify4 \
-    && rm -rf /var/lib/apt/lists/*
-
-# instala o node js
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y nodejs \
     && rm -rf /var/lib/apt/lists/*
 
 # instala o docker cli
