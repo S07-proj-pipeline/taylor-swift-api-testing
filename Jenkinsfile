@@ -12,7 +12,7 @@ pipeline {
 
     stages {
         
-         stage('API — Newman') {
+         stage('API - Newman') {
 
             steps {
                 echo "Executando testes da API com Newman"
@@ -24,7 +24,7 @@ pipeline {
              }
          }
 
-         stage('Carga e Performance — k6') {
+         stage('Carga e Performance - k6') {
             steps {
               echo "Executando teste de carga com k6"
               dir('k6') {
@@ -38,13 +38,13 @@ pipeline {
             }
         }
         
-         stage('Build') {
+         stage('Build/Empacotamento') {
              steps {
                      sh 'mkdir -p artifacts'
 
-                     sh 'zip -r artifacts/projeto-s07.zip . -x "*.git*" "*node_modules*" "artifacts/*"'
-
                      sh 'cp -r /reports/* artifacts/ 2>/dev/null || true'
+
+                     sh 'zip -r artifacts/projeto-s07.zip . -x "*.git*" "*node_modules*" "artifacts/*"'
 
                      writeFile file: 'artifacts/build-info.txt', text: "BUILD=${BUILD_NUMBER}"
                  }
@@ -70,7 +70,7 @@ pipeline {
             echo "Pipeline : ${env.NOME_PIPELINE ?: 'taylor-swift-api-testing-pipeline'}"
             echo "Build    : #${BUILD_NUMBER}"
             echo "Resultado: ${currentBuild.currentResult}"
-            echo "Duração  : ${currentBuild.durationString}"
+            echo "Duração  : ${currentBuild.durgtationString}"
         }
     }
 }
