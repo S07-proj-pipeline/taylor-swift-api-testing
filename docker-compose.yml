@@ -61,7 +61,6 @@ services:
       - reports_data:/relatorios
     networks:
       - pipeline-net
-    entrypoint: ["tail", "-f", "/dev/null"]
     depends_on:
       jenkins:
        condition: service_healthy
