@@ -41,7 +41,7 @@ msg['From'] = remetente
 msg['To'] = ', '.join(lista_destinatarios)
 
 corpo_email = f"""
-Olá equipa,
+Olá equipe,
 
 {mensagem_principal}
 
@@ -53,7 +53,7 @@ Resumo das etapas configuradas na esteira:
 - Geração de Relatórios e Artefatos
 
 Caso existam relatórios gerados nesta execução, acesse ao Portal Nginx local para os visualizar:
-👉 http://localhost
+👉 http://localhost:80
 
 Atenciosamente,
 Pipeline DevOps - Projeto S07
