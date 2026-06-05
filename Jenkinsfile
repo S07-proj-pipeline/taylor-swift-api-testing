@@ -33,8 +33,8 @@ pipeline {
                     steps {
                       echo "Executando teste de carga com k6"
                       dir('k6') {
-                        sh 'docker exec k6 k6 run /scripts/k6/load-test.js 2>&1'
-                        sh 'docker exec k6 k6 run /scripts/k6/stress-test.js 2>&1'
+                        sh 'docker exec -i k6 k6 run /scripts/k6/load-test.js 2>&1'
+                        sh 'docker exec -i k6 k6 run /scripts/k6/stress-test.js 2>&1'
                       }
                     }
                     post {
