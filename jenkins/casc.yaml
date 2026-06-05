@@ -14,7 +14,7 @@ jenkins:
 
 unclassified:
   location:
-    url: "https://nonnegligent-jamarion-overheartily.ngrok-free.dev/"
+    url: "${JENKINS_URL}"
 
 credentials:
   system:
@@ -35,6 +35,10 @@ jobs:
           }
           triggers {
               githubPush()
+          }
+          parameters {
+              // parâmetro vazio só para reativar o Build Now
+              stringParam('TRIGGER', 'manual', 'Disparo manual')
           }
           definition {
               cpsScm {
