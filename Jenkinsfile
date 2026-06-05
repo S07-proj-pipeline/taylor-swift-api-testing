@@ -16,7 +16,7 @@ pipeline {
 
     stages {
          stage('Testes') {
-             stages {
+             parallel {
                  stage('API — Newman') {
 
                     steps {
