@@ -31,6 +31,12 @@ services:
     environment:
       - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
       - DISPLAY=:99
+      # VARIÁVEIS INJETADAS PELO .ENV
+      - NOME_PIPELINE=${NOME_PIPELINE}
+      - EMAILS_DESTINO=${EMAILS_DESTINO}
+      - MODO_ENVIO=${MODO_ENVIO}
+      - REMETENTE_REAL=${REMETENTE_REAL}
+      - SENHA_REAL=${SENHA_REAL}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/login"]
       interval: 30s
@@ -82,5 +88,12 @@ services:
     depends_on:
       jenkins:
         condition: service_healthy
-
-
+      
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: mailhog_server
+    ports:
+      - "8025:8025" # Interface web para ver os e-mails
+      - "1025:1025" # Porta SMTP para o script Python
+    networks:
+      - pipeline-net
