@@ -1,6 +1,7 @@
-# Testes da "Taylor Swift API" com Postman e Newman
+# NP2 - Aplicando DevOps na prática
+## Testes de API - Taylor Swift API
 
-Repositório dedicado à disciplina S07 - Qualidade de Software.
+Repositório dedicado à disciplina S07 - Qualidade de Software para o projeto da NP2.
 
 Integrantes:
 -
@@ -10,22 +11,6 @@ Lídia Carolina de Andrade Rosa | 641 <br>
 Maria Eduarda Constância Rocha Moreira | 710
 
 O projeto utiliza a [Taylor Swift API](https://github.com/sarbor/taylor_swift_api) criada pelo usuário [*Sarbor*](https://github.com/sarbor) no Github, sendo uma API REST pública e gratuita.
-Foi utilizada a ferramenta Newman para execução dos testes via linha de comando no terminal.
-
-As informações sobre endpoints foram retiradas do README do repositório do autor.
-
-Endpoints:
-| Descrição | Endpoint |
-|-----------|----------|
-| Retorna todos os álbuns | `https://taylor-swift-api.sarbo.workers.dev/albums` |
-| Retorna músicas de álbum específico | `https://taylor-swift-api.sarbo.workers.dev/albums/{albumId}` |
-| Retorna todas as músicas | `https://taylor-swift-api.sarbo.workers.dev/songs` |
-| Retorna uma música específica | `https://taylor-swift-api.sarbo.workers.dev/songs/{songId}` |
-| Retorna a letra de uma música | `https://taylor-swift-api.sarbo.workers.dev/lyrics/{songId}` |
-| Retorna N parágrafos de uma música | `https://taylor-swift-api.sarbo.workers.dev/lyrics?shouldRandomizeLyrics=true&numberOfParagraphs={number}` |
-
-*tabela formatada em markdown pelo Copilot no VSCode*
-
 
 ## Tecnologias
 
@@ -36,74 +21,96 @@ A coleção de teste foi criada no Postman, utilizando os scripts post-request (
 Para executar os testes no terminal, foi utilizada a ferramenta Newman. O relatório HTML foi gerado pelo newman-reporter-htmlextra.
 
 ### K6
+Para realizar os testes de performance, foi utilizado o k6, com scripts js para executar.
 
-**As ferramentas foram escolhidas conforme exemplos dados em sala de aula.**
+### Jenkins
+Para implementar a pipeline, foi utilizado o Jenkins.
+
+### Mailhog
+O mailhog foi utilizado para realizar o envio de e-mails.
+
+*As ferramentas foram escolhidas conforme exemplos dados em sala de aula.*
 
 ## Pré-requisitos
-* Node.js 20 ou superior
-* npm (incluso no Node.js)
-* k6
+* Docker 
 
 ## Instalação
 
 ```bash
-git clone "https://github.com/lidiacarolina/taylor-swift-api-testing/"
+git clone "https://github.com/S07-proj-pipeline/taylor-swift-api-testing/"
 
 cd taylor-swift-api-testing
 
-npm install
 ``` 
 
-## Para executar os testes
+É necessário configurar as variáveis de ambiente. Para isso, copie o arquivo .env.example e substitua os valores.
 
-Apenas executar os testes:
 ```bash
-npm test 
+cp .env.example .env
 ```
 
-Para executar os testes e gerar um relatório HTML:
+## Para iniciar o docker
+
+Na raiz do projeto:
+
 ```bash
-npm run test:relatorio 
+    docker compose up --build
 ```
-O relatório é gerado na raiz do projeto.
+
+Para utilizar o webhook, é necessário criar um token clássico no Github, com a configuração "repo" selecionada. O token deve ser substituído também no .env. No cenário real, a build será realizada a cada push no repositório.
+A configuração do Jenkins é feita pelo arquivo casc.yaml. O jenkins também está exposto via ngrok para o funcionamento adequado do webhook (desabilitado momentaneamente por razões de segurança).
+
+A pipeline tem 4 jobs:
+* Testes \
+├── Teste da API com Newman \
+├── Teste de performance com k6
+* Build/empacotamento (cria um arquivo .zip do projeto e dos relatórios gerados)
+* Notificação - envia e-mail ao final da pipeline
 
 ## Estrutura do Projeto
 ```bash
 .
+├── Jenkinsfile
 ├── README.md
 ├── collections
 │   └── taylor-swift-api-testing.postman_collection.json
+├── docker-compose.yml
+├── docs
+│   └── swagger.yaml
+├── jenkins
+│   ├── Dockerfile
+│   ├── casc.yaml
+│   ├── docker-entrypoint.sh
+│   └── plugins.txt
+├── k6
+│   ├── Dockerfile
+│   ├── load-test.js
+│   ├── reports
+│   │   ├── load-summary.html
+│   │   └── stress-summary.html
+│   └── stress-test.js
+├── newman
+│   ├── Dockerfile
+│   └── reports
+│       └── relatorio.html
+├── nginx
+│   ├── Dockerfile
+│   └── index.html
 ├── package-lock.json
-└── package.json
+├── package.json
+└── send_email.py
 
 ```
 
 ## Organização do projeto em grupo
 
-Para versionamento, foi utilizado git com branches. Cada integrante criou sua própria branch, e depois foi realizado um Pull Request e merge para a branch 'develop'. Após finalização do projeto, foi feito o merge para a branch 'main'.
+Para versionamento, foi utilizado git com uma branch develop. Inicialmente, cada integrante ficou responsável por uma tarefa maior relacionada à Devops, conforme imagem abaixo do Trello. Porém, ao decorrer do projeto, todos auxiliaram em diferentes etapas.
 
-## Testes de performance
-Como extra, foram criados testes de estresse e de carga utilizando a ferramenta K6. Ao final da execução dos testes é gerado automaticamente um relatório com detalhes sobre cada teste executado.
+![trello-organizatio-proj-s07](https://i.imgur.com/sCeXDvl.png)
 
-Teste de Carga -> O teste de carga simula 15 usuarios virtuais acessando a API durante 10 segundos visando verificar a estabilidade da API sobre carga leve. Cada um desses usuarios executa três requisições para os endpoints /albums, /songs e /lyrics.
 
-Teste de Estresse -> Foi feita uma configuração em stages para definir uma subida controlada de carga, começando com 5 usuários e subindo de 5 em 5, visando simular um cenário real de crescimento de acessos e verificar como a API se comporta sob uma variação de carga. 
+## Uso de IA
+Durante a realização do projeto, todos os colaboradores contaram com o auxílio de IA. Notou-se que o principal uso foi para identificação e correção de erros de caminho, devido ao context do Docker. Também houveram problemas como encriptação, provavelmente causado pela diferença de sistemas operacionais utilizados pelos membros (MacOS, Linux e Windows). O Jetbrains WebStorm no Windows convertia o arquivo de LF para CLRF, que quebrava o arquivo docker-entrypoint.
 
-Estrutura:
-```bash
-.
-├── reports
-│   └── load-summary.html
-│   └── stress-summary.html
-├── load-test.js
-└── stress-test.js
-
-```
-
-Para testar:
-```bash
-git checkout feature/ana-performance-tests
-
-k6 run stress-test.js
-k6 run load-test.js
-```
+### IA no Jenkins
+Os arquivos Jenkinsfile e Dockerfile.jenkins inicialmente foram copiados dos exemplos de sala. 
