@@ -52,7 +52,7 @@ Resumo das etapas configuradas na esteira:
 - Testes de Carga e Performance (Grafana k6)
 - Geração de Relatórios e Artefatos
 
-Caso existam relatórios gerados nesta execução, aceda ao Portal Nginx local para os visualizar:
+Caso existam relatórios gerados nesta execução, acesse ao Portal Nginx local para os visualizar:
 👉 http://localhost
 
 Atenciosamente,
