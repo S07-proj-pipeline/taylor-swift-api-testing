@@ -9,6 +9,7 @@ USER root
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     git \
+    python3 \
     ca-certificates \
     gnupg \
     lsb-release \
