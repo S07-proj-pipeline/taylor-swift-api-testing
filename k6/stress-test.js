@@ -3,7 +3,7 @@ import { check } from 'k6';
 import { htmlReport } from 'https://raw.githubusercontent.com/benc-uk/k6-reporter/main/dist/bundle.js';
 
 const BASE_URL = 'https://taylor-swift-api.sarbo.workers.dev';
-const REPORT_HTML_FILE = './reports/stress-summary.html';
+const REPORT_HTML_FILE = '/reports/stress-summary.html';
 
 //teste de estresse gradual que vai subindo ate 150 usuarios e dps desce pra 0
 export const options = {

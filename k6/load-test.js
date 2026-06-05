@@ -3,7 +3,7 @@ import { check } from 'k6';
 import { htmlReport } from 'https://raw.githubusercontent.com/benc-uk/k6-reporter/main/dist/bundle.js';
 
 const BASE_URL = 'https://taylor-swift-api.sarbo.workers.dev';
-const REPORT_HTML_FILE = './reports/load-summary.html';
+const REPORT_HTML_FILE = '/reports/load-summary.html';
 
 export const options = {
     vus: 15,

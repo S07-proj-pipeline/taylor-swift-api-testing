@@ -53,10 +53,11 @@ services:
   k6:
     image: grafana/k6:latest
     container_name: k6
+    user: root
     networks:
       - pipeline-net
     volumes:
-      - ..:/workspace:ro
+      - ${PWD}:/scripts:ro
       - reports_data:/reports
     entrypoint: ["tail", "-f", "/dev/null"]
     depends_on:
