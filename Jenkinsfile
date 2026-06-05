@@ -18,16 +18,11 @@ pipeline {
          stage('Testes') {
              stages {
                  stage('API — Newman') {
-                     steps {
-                         echo "Instalando dependências"
-                         dir('pipeline') {
-                             sh 'npm ci'
-                         }
-                         echo "Executando testes"
-                         dir('pipeline') {
-                             sh 'npm test'
-                         }
-                     }
+
+                    steps {
+                        echo "Executando testes da API com Newman"
+                        sh 'docker exec newman-runner npm run test:ci'
+                    }
                      post {
                          success { echo "API: TODAS AS REQUISIÇÕES PASSARAM" }
                          failure { echo "API: FALHAS NAS REQUISIÇÕES" }
