@@ -53,30 +53,29 @@ services:
   k6:
     image: grafana/k6:latest
     container_name: k6
-    user: root
     networks:
       - pipeline-net
     volumes:
-      - ${PWD}:/scripts:ro
+      - ..:/workspace:ro
       - reports_data:/reports
     entrypoint: ["tail", "-f", "/dev/null"]
     depends_on:
       jenkins:
         condition: service_healthy
 
-
-#  newman-runner:
-#    build:
-#      context: ..
-#      dockerfile: pipeline_docker/Dockerfile.jenkins.newman
-#    container_name: newman-runner
-#    restart: unless-stopped
-#    volumes:
-#      - relatorios-data:/relatorios
-#    networks:
-#      - pipeline-net
-#    depends_on:
-#      jenkins:
-#        condition: service_healthy
+  newman-runner:
+    build:
+      context: .
+      dockerfile: newman/Dockerfile.newman
+    container_name: newman-runner
+    restart: unless-stopped
+    volumes:
+      - ..:/workspace:ro
+      - reports_data:/relatorios
+    networks:
+      - pipeline-net
+    depends_on:
+      jenkins:
+        condition: service_healthy
 
 
