@@ -108,5 +108,3 @@ k6 run stress-test.js
 k6 run load-test.js
 ```
 
-Os relatórios criados podem ser acessados na pasta "reports".
-
