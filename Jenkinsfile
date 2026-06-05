@@ -70,7 +70,7 @@ pipeline {
             echo "Pipeline : ${env.NOME_PIPELINE ?: 'taylor-swift-api-testing-pipeline'}"
             echo "Build    : #${BUILD_NUMBER}"
             echo "Resultado: ${currentBuild.currentResult}"
-            echo "Duração  : ${currentBuild.durgtationString}"
+            echo "Duração  : ${currentBuild.durationString}"
         }
     }
 }
