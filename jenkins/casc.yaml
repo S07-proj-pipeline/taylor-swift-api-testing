@@ -8,11 +8,13 @@ jenkins:
   authorizationStrategy:
     loggedInUsersCanDoAnything:
       allowAnonymousRead: true
-  location:
-    url: "https://nonnegligent-jamarion-overheartily.ngrok-free.dev/"
   crumbIssuer:
     standard:
       excludeClientIPFromCrumb: true
+
+unclassified:
+  location:
+    url: "https://nonnegligent-jamarion-overheartily.ngrok-free.dev/"
 
 credentials:
   system:
@@ -29,11 +31,11 @@ jobs:
       pipelineJob('taylor-swift-api-testing-pipeline') {
           description('Pipeline - Taylor Swift API')
           properties {
-               githubProjectUrl('https://github.com/S07-proj-pipeline/taylor-swift-api-testing/')
-           }
+              githubProjectUrl('https://github.com/S07-proj-pipeline/taylor-swift-api-testing/')
+          }
           triggers {
-                   githubPush()
-               }
+              githubPush()
+          }
           definition {
               cpsScm {
                   scm {
