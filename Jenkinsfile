@@ -10,10 +10,6 @@ pipeline {
         disableConcurrentBuilds()
     }
 
-    environment {
-        NOME_PIPELINE = 'taylor-swift-api-testing-pipeline'
-    }
-
     stages {
          stage('Testes') {
              parallel {
