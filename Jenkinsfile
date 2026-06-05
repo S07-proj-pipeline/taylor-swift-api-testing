@@ -11,35 +11,33 @@ pipeline {
     }
 
     stages {
-         stage('Testes') {
-             parallel {
-                 stage('API — Newman') {
+        
+         stage('API — Newman') {
 
-                    steps {
-                        echo "Executando testes da API com Newman"
-                        sh 'docker exec newman-runner npm run test:ci'
-                    }
-                     post {
-                         success { echo "API: TODAS AS REQUISIÇÕES PASSARAM" }
-                         failure { echo "API: FALHAS NAS REQUISIÇÕES" }
-                     }
-                 }
-
-                 stage('Carga e Performance — k6') {
-                    steps {
-                      echo "Executando teste de carga com k6"
-                      dir('k6') {
-                        sh 'docker exec -i k6 k6 run /scripts/k6/load-test.js 2>&1'
-                        sh 'docker exec -i k6 k6 run /scripts/k6/stress-test.js 2>&1'
-                      }
-                    }
-                    post {
-                      success { echo "CARGA: Sucesso" }
-                      failure { echo "CARGA: Falha" }
-                    }
-                }
+            steps {
+                echo "Executando testes da API com Newman"
+                sh 'docker exec newman-runner npm run test:ci'
+             }
+             post {
+                 success { echo "API: TODAS AS REQUISIÇÕES PASSARAM" }
+                 failure { echo "API: FALHAS NAS REQUISIÇÕES" }
              }
          }
+
+         stage('Carga e Performance — k6') {
+            steps {
+              echo "Executando teste de carga com k6"
+              dir('k6') {
+                sh 'docker exec -i k6 k6 run /scripts/k6/load-test.js 2>&1'
+                sh 'docker exec -i k6 k6 run /scripts/k6/stress-test.js 2>&1'
+              }
+            }
+            post {
+              success { echo "CARGA: Sucesso" }
+              failure { echo "CARGA: Falha" }
+            }
+        }
+        
          stage('Build') {
              steps {
                      sh 'mkdir -p artifacts'
@@ -57,7 +55,7 @@ pipeline {
                 echo "Enviando e-mail de notificação dos relatórios..."
                 sh 'python3 send_email.py'
             }
-        }
+         }
 
     }
 
