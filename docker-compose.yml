@@ -36,6 +36,7 @@ services:
       - EMAILS_DESTINO=${EMAILS_DESTINO}
       - MODO_ENVIO=${MODO_ENVIO}
       - REMETENTE_REAL=${REMETENTE_REAL}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/login"]
       interval: 30s

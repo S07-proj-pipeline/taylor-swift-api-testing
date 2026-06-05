@@ -9,10 +9,23 @@ jenkins:
     loggedInUsersCanDoAnything:
       allowAnonymousRead: false
 
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+          - usernamePassword:
+              scope: GLOBAL
+              id: "github-token"
+              username: "x-token"
+              password: "${GITHUB_TOKEN}"
+
 jobs:
   - script: >
       pipelineJob('taylor-swift-api-testing-pipeline') {
           description('Pipeline - Taylor Swift API')
+          triggers {
+                   githubPush()
+               }
           definition {
               cpsScm {
                   scm {
