@@ -81,7 +81,7 @@ services:
     restart: unless-stopped
     volumes:
       - ..:/workspace:ro
-      - reports_data:/relatorios
+      - reports_data:/reports
     networks:
       - pipeline-net
     depends_on:
