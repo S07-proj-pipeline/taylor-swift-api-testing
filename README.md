@@ -119,6 +119,9 @@ Para versionamento, foi utilizado git com uma branch develop. Inicialmente, cada
 
 ![trello-organizatio-proj-s07](https://i.imgur.com/sCeXDvl.png)
 
+## Imagem no Docker HUB
+https://hub.docker.com/r/andradelidia/taylor-swift-jenkins
+
 
 ## Uso de IA
 
@@ -165,9 +168,20 @@ A IA também foi utilizada para dúvidas pontuais de sintaxe Python e resoluçã
 O Claude foi utilizado para ajustar o Dockerfile do k6/Grafana e corrigir os caminhos 
 de armazenamento dos relatórios gerados.
 
+### Docker Hub
+O Claude Sonnet 4.6 auxiliou na dúvida sobre qual imagem publicar e como realizar 
+o processo de publicação, esclarecendo que o requisito exige apenas a imagem principal 
+(Jenkins customizado) e que as demais já são imagens públicas do Docker Hub. 
+O modelo também orientou sobre como adicionar a tag da imagem no `docker-compose.yml` 
+para referenciar a imagem publicada, sem necessidade de alterar o fluxo de build.
 
-*O Claude Sonnet 4.6 também auxiliou na revisão e formatação final do README, 
-organizando as contribuições individuais de uso de IA e padronizando a estrutura do documento.*
+Prompt utilizado:
+> *"Como eu subo no Docker Hub a partir do compose? Preciso fazer isso mas não tenho certeza."*
+
+A resposta esclareceu que o compose não faz push automaticamente — o push é sempre 
+manual via `docker push` — e que basta adicionar a linha `image:` no serviço do 
+`docker-compose.yml` para referenciar a imagem publicada.
+
 
 ---
 
@@ -176,3 +190,22 @@ organizando as contribuições individuais de uso de IA e padronizando a estrutu
 - A estrutura de organização do Docker Compose (escolha dos containers e comunicação entre eles) foi definida pelo grupo
 - As decisões de arquitetura (volume compartilhado, rede bridge dedicada, separação de responsabilidades por container) foram tomadas pelo grupo
 - O mapeamento dos problemas reais de execução e a validação das soluções propostas pela IA foram feitos manualmente
+
+### Avaliação do Projeto
+O Claude Sonnet 4.6 foi utilizado para realizar uma avaliação completa do projeto 
+ao longo do desenvolvimento, verificando o atendimento de cada um dos 14 critérios 
+do documento de projeto. A avaliação foi feita de forma iterativa, analisando os 
+artefatos gerados pelo Jenkins, o `docker-compose.yml`, o `Jenkinsfile`, o `casc.yaml` 
+e o histórico de commits. 
+
+Problemas identificados e corrigidos com auxílio dessa avaliação:
+- Ordem incorreta do `cp` e `zip` no stage Build (relatórios não entravam no pacote)
+- Caminho inconsistente do relatório Newman entre ambiente local e container
+- `archiveArtifacts` apenas no `post { success }`, impedindo o salvamento em caso de falha
+- Ausência de `networks` no container nginx
+- Comentário `//` no Job DSL quebrando o `casc.yaml` e removendo o botão "Build Now"
+- Campo `location` no bloco errado do `casc.yaml`, impedindo o Jenkins de inicializar
+- Configuração completa do webhook GitHub via `casc.yaml`, sem uso da interface gráfica
+
+O modelo também auxiliou na configuração do webhook com ngrok, no debugging 
+iterativo dos logs do Jenkins e na formatação e revisão final deste README.
