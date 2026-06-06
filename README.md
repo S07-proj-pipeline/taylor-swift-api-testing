@@ -104,6 +104,8 @@ Na raiz do projeto:
     docker compose up --build
 ```
 
+Para visualizar os e-mails enviados pela pipeline, acesse o MailHog em `http://localhost:8025` caso o modo de envio seja configurado no `.env` como `MODO_ENVIO=local` (MailHog).  Caso seja `MODO_ENVIO=real` (SMTP externo) e os dados do Gmail forem colocados corretamente, o e-mail será enviado ao destinatário.
+
 ## Pipeline
 
 A pipeline tem 4 jobs:
