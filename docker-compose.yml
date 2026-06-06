@@ -1,0 +1,113 @@
+networks:
+  pipeline-net:
+    driver: bridge
+    name: pipeline-net
+
+volumes:
+  jenkins-data:
+    name: s07-jenkins-data
+
+  reports_data:
+    name: s07-nginx-reports-data
+
+services:
+
+  jenkins:
+    build:
+      # Aponta para a pasta do Jenkins
+      context: ./jenkins
+    container_name: jenkins
+    image: andradelidia/taylor-swift-jenkins
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins-data:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+      - .:/workspace:ro
+      - reports_data:/reports:ro
+    networks:
+      - pipeline-net
+    environment:
+      - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
+      - DISPLAY=:99
+      # VARIÁVEIS INJETADAS PELO .ENV
+      - NOME_PIPELINE=${NOME_PIPELINE}
+      - EMAILS_DESTINO=${EMAILS_DESTINO}
+      - MODO_ENVIO=${MODO_ENVIO}
+      - REMETENTE_REAL=${REMETENTE_REAL}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/login"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  # Portal Nginx Customizado
+  nginx:
+    build:
+      # Aponta para a pasta do Nginx
+      context: ./nginx
+    container_name: nginx_relatorios
+    ports:
+      # Para acessar não precisa especificar a porta depois do IP: http://localhost
+      - "80:80"
+    volumes:
+      # Mapeia o volume para a subpasta /relatorios da página inicial
+      - reports_data:/usr/share/nginx/html/relatorios
+
+  k6:
+    image: grafana/k6:latest
+    container_name: k6
+    user: root
+    networks:
+      - pipeline-net
+    volumes:
+      - type: bind
+        source: .
+        target: /scripts
+        read_only: true
+      - reports_data:/reports
+    entrypoint: [ "/bin/ash", "-c", "chmod 777 /reports && tail -f /dev/null" ]
+    depends_on:
+      jenkins:
+        condition: service_healthy
+
+  newman-runner:
+    build:
+      context: .
+      dockerfile: newman/Dockerfile
+    container_name: newman-runner
+    restart: unless-stopped
+    volumes:
+      - ..:/workspace:ro
+      - reports_data:/reports
+    networks:
+      - pipeline-net
+    depends_on:
+      jenkins:
+        condition: service_healthy
+      
+  # Container para notificação local (Simula o envio de e-mail)
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: mailhog_server
+    ports:
+      - "8025:8025" # Interface web para ver os e-mails
+    networks:
+      - pipeline-net
+
+  # Container para notificação real
+  smtp-relay:
+    image: bytemark/smtp
+    container_name: smtp_relay
+    restart: unless-stopped
+    environment:
+      - RELAY_HOST=${SMTP_SERVIDOR}
+      - RELAY_PORT=587
+      - RELAY_USERNAME=${REMETENTE_REAL}
+      - RELAY_PASSWORD=${SENHA_REAL}
+    networks:
+      - pipeline-net

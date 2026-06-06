@@ -1,6 +1,7 @@
-# Testes da "Taylor Swift API" com Postman e Newman
+# NP2 - Aplicando DevOps na prática
+## Testes de API - Taylor Swift API
 
-Repositório dedicado à disciplina S07 - Qualidade de Software.
+Repositório dedicado à disciplina S07 - Qualidade de Software para o projeto da NP2.
 
 Integrantes:
 -
@@ -10,192 +11,256 @@ Lídia Carolina de Andrade Rosa | 641 <br>
 Maria Eduarda Constância Rocha Moreira | 710
 
 O projeto utiliza a [Taylor Swift API](https://github.com/sarbor/taylor_swift_api) criada pelo usuário [*Sarbor*](https://github.com/sarbor) no Github, sendo uma API REST pública e gratuita.
-Foi utilizada a ferramenta Newman para execução dos testes via linha de comando no terminal.
-
-As informações sobre endpoints foram retiradas do README do repositório do autor.
-
-Endpoints:
-| Descrição | Endpoint |
-|-----------|----------|
-| Retorna todos os álbuns | `https://taylor-swift-api.sarbo.workers.dev/albums` |
-| Retorna músicas de álbum específico | `https://taylor-swift-api.sarbo.workers.dev/albums/{albumId}` |
-| Retorna todas as músicas | `https://taylor-swift-api.sarbo.workers.dev/songs` |
-| Retorna uma música específica | `https://taylor-swift-api.sarbo.workers.dev/songs/{songId}` |
-| Retorna a letra de uma música | `https://taylor-swift-api.sarbo.workers.dev/lyrics/{songId}` |
-| Retorna N parágrafos de uma música | `https://taylor-swift-api.sarbo.workers.dev/lyrics?shouldRandomizeLyrics=true&numberOfParagraphs={number}` |
-
-*tabela formatada em markdown pelo Copilot no VSCode*
-
 
 ## Tecnologias
 
 ### Postman
-A coleção de teste foi criada no Postman, utilizando os scripts post-request (executados após as requisições).
+A coleção de testes foi criada no Postman, utilizando scripts post-request para validar as respostas da API diretamente após cada requisição.
 
 ### Newman
-Para executar os testes no terminal, foi utilizada a ferramenta Newman. O relatório HTML foi gerado pelo newman-reporter-htmlextra.
+Ferramenta CLI para execução da coleção Postman via terminal. Os relatórios HTML foram gerados pelo newman-reporter-htmlextra e armazenados como artefatos no Jenkins.
 
 ### K6
+Ferramenta de testes de performance utilizada para simular cenários de carga e stress na API. Os scripts em JavaScript geram relatórios HTML salvos em volume compartilhado com o Nginx.
 
-**As ferramentas foram escolhidas conforme exemplos dados em sala de aula.**
+### Jenkins
+Servidor de CI/CD utilizado para automatizar a pipeline. Configurado inteiramente como código via Dockerfile, Jenkinsfile e casc.yaml — sem uso de interface gráfica para criação de etapas.
+
+### Docker e Docker Compose
+Toda a infraestrutura é definida como código. O Docker Compose orquestra 6 containers: Jenkins, Newman, k6, Nginx, MailHog e smtp-relay, todos integrados via rede bridge dedicada.
+
+### MailHog
+Servidor SMTP de desenvolvimento utilizado para interceptar e visualizar os e-mails enviados ao final da pipeline, sem necessidade de configuração de servidor real.
+
+### Nginx
+Servidor web utilizado para servir os relatórios de teste gerados pela pipeline, acessíveis via browser após a execução.
+
+### ngrok
+Ferramenta de tunelamento utilizada para expor o Jenkins localmente para a internet, permitindo o funcionamento do webhook do GitHub.
+
+*As ferramentas foram escolhidas conforme exemplos dados em sala de aula.*
 
 ## Pré-requisitos
-* Node.js 20 ou superior
-* npm (incluso no Node.js)
-* k6
+* Docker 
 
 ## Instalação
 
 ```bash
-git clone "https://github.com/lidiacarolina/taylor-swift-api-testing/"
+git clone "https://github.com/S07-proj-pipeline/taylor-swift-api-testing/"
 
 cd taylor-swift-api-testing
 
-npm install
 ``` 
 
-## Para executar os testes
+É necessário configurar as variáveis de ambiente. Para isso, copie o arquivo .env.example e substitua os valores.
 
-Apenas executar os testes:
 ```bash
-npm test 
+cp .env.example .env
 ```
 
-Para executar os testes e gerar um relatório HTML:
+## Webhook (opcional)
+
+Por padrão, o projeto roda sem webhook — a pipeline pode ser disparada manualmente ou via push no repositório com o webhook configurado.
+
+### Configurar o webhook com ngrok
+Para que um push no repositório dispare a pipeline automaticamente, é necessário 
+expor o Jenkins via ngrok e configurar o webhook no GitHub.
+
+**1. Instale e autentique o ngrok:** https://ngrok.com/download
+
+**2. Exponha o Jenkins:**
 ```bash
-npm run test:relatorio 
+ngrok http 8080
 ```
-O relatório é gerado na raiz do projeto.
+
+**3. Atualize o `.env` com a URL gerada pelo ngrok:**
+```env
+JENKINS_URL=https://seu-id.ngrok-free.app/
+```
+
+**4. Reinicie os containers:**
+```bash
+docker-compose down && docker-compose up --build
+```
+
+**5. Configure o webhook no GitHub:**  
+Acesse **Settings > Webhooks > Add webhook** no repositório e preencha:
+- Payload URL: `https://seu-id.ngrok-free.app/github-webhook/`
+- Content type: `application/json`
+- SSL verification: `Disable`
+- Events: `Just the push event`
+
+> ⚠️ A URL do ngrok muda a cada reinício no plano gratuito. 
+> Atualize o `.env` e o webhook no GitHub sempre que isso ocorrer.
+
+
+> ⚠️ No .env.example já tem a URL do ngrok exposta pela colaboradora Lídia. Porém, está desabilitada por razões de segurança e será habilitada novamente para a apresentação.
+
+## Para iniciar o docker
+
+Na raiz do projeto:
+
+```bash
+    docker compose up --build
+```
+
+## Pipeline
+
+A pipeline tem 4 jobs:
+* Testes \
+├── Teste da API com Newman \
+├── Teste de performance com k6
+* Build/empacotamento (cria um arquivo .zip do projeto e dos relatórios gerados)
+* Notification - envia e-mail ao final da pipeline
+
+![jenkins-pipeline](https://i.imgur.com/vuK2Phj.png)
+
+## Primeiro Build
+
+Após subir os containers pela primeira vez, o botão "Build Now" pode não aparecer 
+na interface do Jenkins. Para disparar o primeiro build manualmente via terminal:
+
+```bash
+curl -X POST http://admin:admin@localhost:8080/job/taylor-swift-api-testing-pipeline/buildWithParameters \
+  --cookie-jar /tmp/cookies.txt \
+  --cookie /tmp/cookies.txt \
+  -H "$(curl -s --cookie-jar /tmp/cookies.txt --cookie /tmp/cookies.txt \
+    http://admin:admin@localhost:8080/crumbIssuer/api/json | \
+    python3 -c "import sys,json; d=json.load(sys.stdin); print(d['crumbRequestField']+':'+d['crumb'])")" \
+  --data "TRIGGER=manual"
+```
+
+Após o primeiro build, o botão **"Build With Parameters"** aparecerá normalmente 
+na interface do Jenkins.
 
 ## Estrutura do Projeto
 ```bash
 .
+├── Jenkinsfile
 ├── README.md
 ├── collections
 │   └── taylor-swift-api-testing.postman_collection.json
+├── docker-compose.yml
+├── docs
+│   └── swagger.yaml
+├── jenkins
+│   ├── Dockerfile
+│   ├── casc.yaml
+│   ├── docker-entrypoint.sh
+│   └── plugins.txt
+├── k6
+│   ├── Dockerfile
+│   ├── load-test.js
+│   ├── reports
+│   │   ├── load-summary.html
+│   │   └── stress-summary.html
+│   └── stress-test.js
+├── newman
+│   ├── Dockerfile
+│   └── reports
+│       └── relatorio.html
+├── nginx
+│   ├── Dockerfile
+│   └── index.html
 ├── package-lock.json
-└── package.json
+├── package.json
+└── send_email.py
 
 ```
 
 ## Organização do projeto em grupo
 
-Para versionamento, foi utilizado git com branches. Cada integrante criou sua própria branch, e depois foi realizado um Pull Request e merge para a branch 'develop'. Após finalização do projeto, foi feito o merge para a branch 'main'.
+Para versionamento, foi utilizado git com uma branch develop. Inicialmente, cada integrante ficou responsável por uma tarefa maior relacionada à Devops, conforme imagem abaixo do Trello. Porém, ao decorrer do projeto, todos auxiliaram em diferentes etapas.
 
-## Testes de performance
-Como extra, foram criados testes de estresse e de carga utilizando a ferramenta K6. Ao final da execução dos testes é gerado automaticamente um relatório com detalhes sobre cada teste executado.
+![trello-organizatio-proj-s07](https://i.imgur.com/sCeXDvl.png)
 
-Teste de Carga -> O teste de carga simula 15 usuarios virtuais acessando a API durante 10 segundos visando verificar a estabilidade da API sobre carga leve. Cada um desses usuarios executa três requisições para os endpoints /albums, /songs e /lyrics.
+## Imagem no Docker HUB
+https://hub.docker.com/r/andradelidia/taylor-swift-jenkins
 
-Teste de Estresse -> Foi feita uma configuração em stages para definir uma subida controlada de carga, começando com 5 usuários e subindo de 5 em 5, visando simular um cenário real de crescimento de acessos e verificar como a API se comporta sob uma variação de carga. 
 
-Estrutura:
-```bash
-.
-├── reports
-│   └── load-summary.html
-│   └── stress-summary.html
-├── load-test.js
-└── stress-test.js
+## Uso de IA
 
-```
+Durante o projeto, todos os colaboradores utilizaram ferramentas de IA como apoio. 
+O uso foi declarado individualmente por cada integrante e documentado abaixo.
+Os modelos utilizados foram **Claude Sonnet 4.6** (Anthropic), **Gemini** (Google) e **DeepSeek** (modo thinking).
 
-Para testar:
-```bash
-git checkout feature/ana-performance-tests
+### Dinâmica geral
+O uso foi predominantemente individual, durante o desenvolvimento de cada componente. 
+Em alguns momentos foi utilizado como pair programming para depuração de erros, 
+especialmente relacionados a caminhos de arquivo no contexto Docker e diferenças entre sistemas operacionais.
 
-k6 run stress-test.js
-k6 run load-test.js
-```
+Um problema recorrente identificado foi a conversão de line endings de LF para CRLF pelo 
+JetBrains WebStorm no Windows, que quebrava o `docker-entrypoint.sh`. 
+A IA auxiliou na identificação da causa e na correção via `.gitattributes`.
 
-Os relatórios criados podem ser acessados na pasta "reports".
+### Jenkins 
+Os arquivos `Jenkinsfile` e `Dockerfile` do Jenkins foram inicialmente baseados nos 
+exemplos de sala de aula e posteriormente adaptados com auxílio do DeepSeek (modo thinking). 
+O `casc.yaml` partiu de um template gerado pelo Gemini e foi incrementado com o Claude, 
+principalmente durante a configuração do webhook com GitHub e ngrok.
 
-## Referências e utilização de IA
+**Exemplo de prompt utilizado:**
+> *"Preciso configurar um webhook do GitHub para disparar o Jenkins em container Docker. 
+> O ngrok já expõe a porta 8080. Como adaptar esse tutorial para funcionar via casc.yaml 
+> sem usar a interface gráfica do Jenkins?"*
 
-Para criação dos testes e desenvolvimento do plano de testes, foram consultadas as seguintes fontes:
+A resposta foi aceita parcialmente — a estrutura do `casc.yaml` foi utilizada, 
+mas foi necessário iterar várias vezes para corrigir problemas como `location` 
+dentro do bloco errado (`jenkins:` ao invés de `unclassified:`), 
+Content-Type null no payload do webhook e o trigger não sendo aplicado por cache do volume.
 
-[Medium - Técnica de Teste — Particionamento de Equivalência](https://medium.com/revista-tspi/t%C3%A9cnica-de-teste-particionamento-de-equival%C3%AAncia-d32a7d689d82) \
-[Black Box Testing - Software Engineering](https://www.geeksforgeeks.org/software-testing/software-engineering-black-box-testing/) \
-[Stack Overflow: Postman test automation - verify json array response](https://stackoverflow.com/questions/63618247/postman-test-automation-verify-json-array-response) \
-[Postman Learning: Install and run Newman](https://learning.postman.com/docs/collections/using-newman-cli/installing-running-newman) \
-[Grafana k6 Documents](https://grafana.com/docs/k6/latest/) \
-[Write scripts to test API response data in Postman](https://learning.postman.com/docs/tests-and-scripts/write-scripts/test-scripts) \
-[Postman test script examples](https://learning.postman.com/docs/tests-and-scripts/write-scripts/test-examples) \
-Material de aula
+### Newman
+O Claude foi utilizado principalmente para análise do projeto como um todo e correção de erros de caminho no contexto Docker. 
 
-Foi utilizado o Claude para execução das seguintes tarefas:
-- Dentro do Postman, foi utilizado o agente de IA na versão Opus 4.6 para automatização da criação de identificadores únicos para os testes
-- Também dentro do Postman, foi solicitada uma avaliação da cobertura dos testes, obtendo a seguinte resposta:
+### E-mail 
+O Gemini foi utilizado para análise de erros no script de notificação e para 
+geração da maior parte do `send_email.py`.
 
-### Functional Test Coverage Analysis — taylor-swift-api-testing
+O script gerado foi aceito com pequenos ajustes de sintaxe. 
+A IA também foi utilizada para dúvidas pontuais de sintaxe Python e resolução de erros.
 
-#### Overview
+### Testes de performance 
+O Claude foi utilizado para ajustar o Dockerfile do k6/Grafana e corrigir os caminhos 
+de armazenamento dos relatórios gerados.
 
-- **Total Requests:** 12 (11 GET, 1 DELETE)
-- **Total Tests:** 36
-- **Test Naming Convention:** `T1xx` = positive/happy path tests, `T2xx` = negative/error tests
-- **API Base URL:** `{{baseURL}}` (Taylor Swift API)
-- **Pre-request Scripts:** None
-- **Custom Headers / Request Bodies:** None
+### Docker Hub
+O Claude Sonnet 4.6 auxiliou na dúvida sobre qual imagem publicar e como realizar 
+o processo de publicação, esclarecendo que o requisito exige apenas a imagem principal 
+(Jenkins customizado) e que as demais já são imagens públicas do Docker Hub. 
+O modelo também orientou sobre como adicionar a tag da imagem no `docker-compose.yml` 
+para referenciar a imagem publicada, sem necessidade de alterar o fluxo de build.
 
----
+Prompt utilizado:
+> *"Como eu subo no Docker Hub a partir do compose? Preciso fazer isso mas não tenho certeza."*
 
-#### Endpoint Coverage
+A resposta esclareceu que o compose não faz push automaticamente — o push é sempre 
+manual via `docker push` — e que basta adicionar a linha `image:` no serviço do 
+`docker-compose.yml` para referenciar a imagem publicada.
 
-| Endpoint | Method | Requests Covering It |
-|---|---|---|
-| `/albums` | GET | 1 (list all albums) |
-| `/albums/{id}` | GET | 2 (valid ID + non-existent ID) |
-| `/albums/{id}` | DELETE | 1 (unauthorized delete) |
-| `/songs` | GET | 3 (all songs, Eras Tour setlist, London Boy) |
-| `/songs/{id}` | GET | 1 (invalid param `abc`) |
-| `/lyrics` | GET | 3 (random with paragraphs, missing paragraphs, invalid params) |
-| `/lyrics/{id}` | GET | 1 (text instead of ID) |
 
 ---
 
-#### Test Type Breakdown
+### O que não foi feito por IA
+- A coleção de testes do Postman foi construída manualmente, requisição por requisição
+- A estrutura de organização do Docker Compose (escolha dos containers e comunicação entre eles) foi definida pelo grupo
+- As decisões de arquitetura (volume compartilhado, rede bridge dedicada, separação de responsabilidades por container) foram tomadas pelo grupo
+- O mapeamento dos problemas reais de execução e a validação das soluções propostas pela IA foram feitos manualmente
 
-| Test Category | Count | Test IDs |
-|---|---|---|
-| **Status code validation** | 12 | T101, T108, T115, T117, T119, T121, T201, T205, T207, T209, T211, T213 |
-| **Response format (JSON)** | 3 | T102, T109, T202 |
-| **Response structure (array/object)** | 3 | T103, T110, T203 |
-| **Data count/length** | 3 | T104, T111, T122 |
-| **Property existence** | 4 | T105, T112, T116, T120 |
-| **Specific data validation** | 5 | T106, T107, T113, T114, T118 |
-| **Error message/content** | 4 | T204, T208, T210, T212 |
-| **Input validation (negative)** | 2 | T206, T214 |
+### Avaliação do Projeto
+O Claude Sonnet 4.6 foi utilizado para realizar uma avaliação completa do projeto 
+ao longo do desenvolvimento, verificando o atendimento de cada um dos 14 critérios 
+do documento de projeto. A avaliação foi feita de forma iterativa, analisando os 
+artefatos gerados pelo Jenkins, o `docker-compose.yml`, o `Jenkinsfile`, o `casc.yaml` 
+e o histórico de commits. 
 
----
+Problemas identificados e corrigidos com auxílio dessa avaliação:
+- Ordem incorreta do `cp` e `zip` no stage Build (relatórios não entravam no pacote)
+- Caminho inconsistente do relatório Newman entre ambiente local e container
+- `archiveArtifacts` apenas no `post { success }`, impedindo o salvamento em caso de falha
+- Ausência de `networks` no container nginx
+- Comentário `//` no Job DSL quebrando o `casc.yaml` e removendo o botão "Build Now"
+- Campo `location` no bloco errado do `casc.yaml`, impedindo o Jenkins de inicializar
+- Configuração completa do webhook GitHub via `casc.yaml`, sem uso da interface gráfica
 
-#### Strengths
-
-1. **Good positive/negative split:** 22 positive tests (T1xx) and 14 negative tests (T2xx) — a healthy ratio.
-2. **Boundary & invalid input testing:** Tests cover non-existent IDs (`/albums/999`), text instead of numeric IDs (`/songs/abc`, `/lyrics/letras`), and invalid query params (`batata`, `-5`).
-3. **Data integrity checks:** Tests verify specific data values (e.g., Anti-Hero's `song_id` is 157, Midnights release date, Eras Tour setlist completeness).
-4. **Consistent test ID convention:** Makes it easy to trace and report failures.
-
----
-
-#### Gaps & Recommendations
-
-| Gap | Details | Suggestion |
-|---|---|---|
-| **No POST/PUT/PATCH coverage** | Only GET and DELETE are tested. No create or update operations. | Add tests for creating/updating albums, songs, or lyrics if the API supports it. |
-| **Missing response time checks** | No performance assertions. | Add `pm.expect(pm.response.responseTime).to.be.below(2000)` to critical endpoints. |
-| **No response header validation** | Content-Type, CORS headers, etc. are not checked. | Add `pm.response.to.have.header("Content-Type", "application/json")`. |
-| **No schema validation** | Response body structure is loosely checked (property existence only). | Use `pm.expect(tv4.validate(jsonData, schema))` or `ajv` for JSON schema validation. |
-| **Sparse tests on some requests** | 6 requests have only 2 tests each, while 2 requests have 7 tests. | Add JSON format checks and structure assertions to the lighter requests. |
-| **No collection-level scripts** | Both collection-level pre-request and test scripts are empty. | Add shared assertions (e.g., response time, content-type) at the collection level to apply to all requests. |
-| **No `/lyrics/{id}` happy path** | There's a negative test for lyrics by ID, but no positive test fetching a valid lyric by ID. | Add a request like `GET /lyrics/1` with validation. |
-| **No `/songs/{id}` happy path** | Only the invalid param test exists for a specific song. | Add a request like `GET /songs/157` to validate fetching a single song. |
-| **No pre-request scripts** | No dynamic data setup or variable chaining. | Consider using pre-request scripts to set up test data or chain requests (e.g., fetch an album ID, then use it in the next request). |
-
----
-
-#### Coverage Score: ~65%
-
-The collection has solid foundational coverage for the main list endpoints and good negative testing, but it is missing happy-path tests for individual resource endpoints (`/songs/{id}`, `/lyrics/{id}`), write operations, response schema validation, and performance checks.
-
-* Também foi gerada a tabela de descrição de testes do plano de testes a partir do JSON da collection com a versão Sonnet 4.6 via website
+O modelo também auxiliou na configuração do webhook com ngrok, no debugging 
+iterativo dos logs do Jenkins e na formatação e revisão final deste README.

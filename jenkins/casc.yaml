@@ -1,0 +1,56 @@
+jenkins:
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: "admin"
+          password: "admin"
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: true
+  crumbIssuer:
+    standard:
+      excludeClientIPFromCrumb: true
+
+unclassified:
+  location:
+    url: "${JENKINS_URL}"
+
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+          - usernamePassword:
+              scope: GLOBAL
+              id: "github-token"
+              username: "x-token"
+              password: "${GITHUB_TOKEN}"
+
+jobs:
+  - script: >
+      pipelineJob('taylor-swift-api-testing-pipeline') {
+          description('Pipeline - Taylor Swift API')
+          properties {
+              githubProjectUrl('https://github.com/S07-proj-pipeline/taylor-swift-api-testing/')
+          }
+          triggers {
+              githubPush()
+          }
+          parameters {
+              stringParam('TRIGGER', 'manual', 'Disparo manual')
+          }
+          definition {
+              cpsScm {
+                  scm {
+                      git {
+                          remote {
+                              url('https://github.com/S07-proj-pipeline/taylor-swift-api-testing')
+                              credentials('github-token')
+                          }
+                          branches('develop')
+                      }
+                  }
+                  scriptPath('Jenkinsfile')
+              }
+          }
+      }
