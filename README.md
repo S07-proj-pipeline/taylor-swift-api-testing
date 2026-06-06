@@ -165,6 +165,12 @@ A IA também foi utilizada para dúvidas pontuais de sintaxe Python e resoluçã
 O Claude foi utilizado para ajustar o Dockerfile do k6/Grafana e corrigir os caminhos 
 de armazenamento dos relatórios gerados.
 
+
+*O Claude Sonnet 4.6 também auxiliou na revisão e formatação final do README, 
+organizando as contribuições individuais de uso de IA e padronizando a estrutura do documento.*
+
+---
+
 ### O que não foi feito por IA
 - A coleção de testes do Postman foi construída manualmente, requisição por requisição
 - A estrutura de organização do Docker Compose (escolha dos containers e comunicação entre eles) foi definida pelo grupo
