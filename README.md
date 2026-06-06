@@ -58,6 +58,44 @@ cd taylor-swift-api-testing
 cp .env.example .env
 ```
 
+## Webhook (opcional)
+
+Por padrão, o projeto roda sem webhook — a pipeline pode ser disparada manualmente ou via push no repositório com o webhook configurado.
+
+### Configurar o webhook com ngrok
+Para que um push no repositório dispare a pipeline automaticamente, é necessário 
+expor o Jenkins via ngrok e configurar o webhook no GitHub.
+
+**1. Instale e autentique o ngrok:** https://ngrok.com/download
+
+**2. Exponha o Jenkins:**
+```bash
+ngrok http 8080
+```
+
+**3. Atualize o `.env` com a URL gerada pelo ngrok:**
+```env
+JENKINS_URL=https://seu-id.ngrok-free.app/
+```
+
+**4. Reinicie os containers:**
+```bash
+docker-compose down && docker-compose up --build
+```
+
+**5. Configure o webhook no GitHub:**  
+Acesse **Settings > Webhooks > Add webhook** no repositório e preencha:
+- Payload URL: `https://seu-id.ngrok-free.app/github-webhook/`
+- Content type: `application/json`
+- SSL verification: `Disable`
+- Events: `Just the push event`
+
+> ⚠️ A URL do ngrok muda a cada reinício no plano gratuito. 
+> Atualize o `.env` e o webhook no GitHub sempre que isso ocorrer.
+
+
+> ⚠️ No .env.example já tem a URL do ngrok exposta pela colaboradora Lídia. Porém, está desabilitada por razões de segurança e será habilitada novamente para a apresentação.
+
 ## Para iniciar o docker
 
 Na raiz do projeto:
@@ -66,8 +104,7 @@ Na raiz do projeto:
     docker compose up --build
 ```
 
-Para utilizar o webhook, é necessário criar um token clássico no Github, com a configuração "repo" selecionada. O token deve ser substituído também no .env. No cenário real, a build será realizada a cada push no repositório.
-A configuração do Jenkins é feita pelo arquivo casc.yaml. O jenkins também está exposto via ngrok para o funcionamento adequado do webhook (desabilitado momentaneamente por razões de segurança).
+## Pipeline
 
 A pipeline tem 4 jobs:
 * Testes \
@@ -77,6 +114,24 @@ A pipeline tem 4 jobs:
 * Notification - envia e-mail ao final da pipeline
 
 ![jenkins-pipeline](https://i.imgur.com/vuK2Phj.png)
+
+## Primeiro Build
+
+Após subir os containers pela primeira vez, o botão "Build Now" pode não aparecer 
+na interface do Jenkins. Para disparar o primeiro build manualmente via terminal:
+
+```bash
+curl -X POST http://admin:admin@localhost:8080/job/taylor-swift-api-testing-pipeline/buildWithParameters \
+  --cookie-jar /tmp/cookies.txt \
+  --cookie /tmp/cookies.txt \
+  -H "$(curl -s --cookie-jar /tmp/cookies.txt --cookie /tmp/cookies.txt \
+    http://admin:admin@localhost:8080/crumbIssuer/api/json | \
+    python3 -c "import sys,json; d=json.load(sys.stdin); print(d['crumbRequestField']+':'+d['crumb'])")" \
+  --data "TRIGGER=manual"
+```
+
+Após o primeiro build, o botão **"Build With Parameters"** aparecerá normalmente 
+na interface do Jenkins.
 
 ## Estrutura do Projeto
 ```bash
