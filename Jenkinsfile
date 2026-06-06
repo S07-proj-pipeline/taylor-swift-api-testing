@@ -92,11 +92,11 @@ pipeline {
     post {
         success {
           echo "Pipeline concluído com SUCESSO!"
-          archiveArtifacts artifacts: 'artifacts/projeto-s07.zip, artifacts/*.html, artifacts/*.json', fingerprint: true
         }
         failure { echo "Pipeline FALHOU. Verificar logs acima." }
         unstable { echo "Pipeline INSTÁVEL — alguns testes falharam." }
         always {
+            archiveArtifacts artifacts: 'artifacts/projeto-s07.zip, artifacts/*.html, artifacts/*.json', fingerprint: true
             echo "Pipeline : ${env.NOME_PIPELINE ?: 'taylor-swift-api-testing-pipeline'}"
             echo "Build    : #${BUILD_NUMBER}"
             echo "Resultado: ${currentBuild.currentResult}"
