@@ -47,7 +47,7 @@ jobs:
                               url('https://github.com/S07-proj-pipeline/taylor-swift-api-testing')
                               credentials('github-token')
                           }
-                          branches('develop')
+                          branches('main')
                       }
                   }
                   scriptPath('Jenkinsfile')
