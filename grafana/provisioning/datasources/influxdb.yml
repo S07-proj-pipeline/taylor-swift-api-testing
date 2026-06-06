@@ -1,0 +1,13 @@
+# Provisiona automaticamente o datasource do InfluxDB no Grafana.
+# O "uid" fixo é referenciado pelo dashboard do k6 (k6.json).
+apiVersion: 1
+
+datasources:
+  - name: InfluxDB-k6
+    uid: influxdb_k6
+    type: influxdb
+    access: proxy
+    url: http://influxdb:8086
+    database: k6
+    isDefault: true
+    editable: true

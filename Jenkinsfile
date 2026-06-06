@@ -38,12 +38,14 @@ pipeline {
 
          stage('Carga e Performance - k6') {
             steps {
-              echo "Executando teste de carga com k6"
+              echo "Executando teste de carga com k6 (metricas -> InfluxDB -> Grafana)"
               dir('k6') {
                 // O catchError permite que o teste falhe, mas não aborte a pipeline
                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                    sh 'docker exec -i k6 k6 run /scripts/k6/load-test.js 2>&1'
-                    sh 'docker exec -i k6 k6 run /scripts/k6/stress-test.js 2>&1'
+                    // -o influxdb=... envia as metricas para o InfluxDB em tempo real.
+                    // O handleSummary() dos scripts continua gerando o HTML normalmente.
+                    sh 'docker exec -i k6 k6 run -o influxdb=http://influxdb:8086/k6 /scripts/k6/load-test.js 2>&1'
+                    sh 'docker exec -i k6 k6 run -o influxdb=http://influxdb:8086/k6 /scripts/k6/stress-test.js 2>&1'
                 }
               }
             }
@@ -90,6 +92,7 @@ pipeline {
     }
 
     post {
+
         success {
           echo "Pipeline concluído com SUCESSO!"
           archiveArtifacts artifacts: 'artifacts/projeto-s07.zip, artifacts/*.html, artifacts/*.json', fingerprint: true

@@ -1,0 +1,12 @@
+# Provisiona automaticamente os dashboards a partir da pasta montada.
+apiVersion: 1
+
+providers:
+  - name: k6
+    orgId: 1
+    folder: ''
+    type: file
+    disableDeletion: false
+    editable: true
+    options:
+      path: /var/lib/grafana/dashboards
