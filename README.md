@@ -267,4 +267,3 @@ Problemas identificados e corrigidos com auxílio dessa avaliação:
 O modelo também auxiliou na configuração do webhook com ngrok, no debugging 
 iterativo dos logs do Jenkins e na formatação e revisão final deste README.
 
-.
