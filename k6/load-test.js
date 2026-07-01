@@ -6,8 +6,12 @@ const BASE_URL = 'https://taylor-swift-api.sarbo.workers.dev';
 const REPORT_HTML_FILE = '/reports/load-summary.html';
 
 export const options = {
-    vus: 15,
-    duration: '10s',
+  vus: 15,
+  duration: '10s',
+  thresholds: {
+      http_req_failed:   ['rate<0.01'],   // menos de 1% de erro
+      http_req_duration: ['p(95)<800'],   // 95% abaixo de 800ms
+  },
 };
 
 export default function () {

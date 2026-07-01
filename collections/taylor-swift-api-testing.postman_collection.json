@@ -603,6 +603,101 @@
         }
       },
       "response": []
+    },
+    {
+      "name": "Buscar musica especifica (Anti-Hero)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"T123 - Status deve ser 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"T124 - Resposta deve ser JSON\", function () {",
+              "    pm.response.to.be.json;",
+              "});",
+              "",
+              "pm.test(\"T125 - Objeto tem song_id, song_title e album_id\", function () {",
+              "    const song = pm.response.json();",
+              "    pm.expect(song).to.have.property(\"song_id\");",
+              "    pm.expect(song).to.have.property(\"song_title\");",
+              "    pm.expect(song).to.have.property(\"album_id\");",
+              "});",
+              "",
+              "pm.test(\"T126 - song_id 157 corresponde a Anti-Hero\", function () {",
+              "    const song = pm.response.json();",
+              "    pm.expect(song.song_id).to.eql(157);",
+              "    pm.expect(song.song_title).to.eql(\"Anti-Hero\");",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseURL}}/songs/157",
+          "host": [
+            "{{baseURL}}"
+          ],
+          "path": [
+            "songs",
+            "157"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Buscar letra de musica especifica",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"T127 - Status deve ser 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"T128 - Resposta deve ser JSON\", function () {",
+              "    pm.response.to.be.json;",
+              "});",
+              "",
+              "pm.test(\"T129 - Objeto tem song_id, song_title e lyrics\", function () {",
+              "    const data = pm.response.json();",
+              "    pm.expect(data).to.have.property(\"song_id\");",
+              "    pm.expect(data).to.have.property(\"song_title\");",
+              "    pm.expect(data).to.have.property(\"lyrics\");",
+              "});",
+              "",
+              "pm.test(\"T130 - Campo lyrics nao esta vazio\", function () {",
+              "    const data = pm.response.json();",
+              "    pm.expect(String(data.lyrics).trim().length).to.be.greaterThan(0);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseURL}}/lyrics/157",
+          "host": [
+            "{{baseURL}}"
+          ],
+          "path": [
+            "lyrics",
+            "157"
+          ]
+        }
+      },
+      "response": []
     }
   ],
   "event": [

@@ -14,8 +14,11 @@ export const options = {
     { duration: '10s', target: 0 },
   ],
   gracefulRampDown: '5s',
+  thresholds: {
+    http_req_failed:   ['rate<0.05'],    // sob stress tolera ate 5% de erro
+    http_req_duration: ['p(95)<2000'],   // 95% abaixo de 2s
+  },
 };
-
 export default function () {
 
   const albumsResponse = http.get(`${BASE_URL}/albums`);
